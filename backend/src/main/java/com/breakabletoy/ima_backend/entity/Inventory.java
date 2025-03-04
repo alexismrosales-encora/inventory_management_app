@@ -4,15 +4,15 @@ import com.breakabletoy.ima_backend.enums.StockStatus;
 
 public class Inventory {
     private long id;
-    private long productId;
+    private Product product;
     private int quantity;
     private StockStatus stockStatus;
 
     public Inventory() {}
 
-    public Inventory(long id, long productId, int quantity, StockStatus stockStatus) {
+    public Inventory(long id, Product product, int quantity, StockStatus stockStatus) {
         this.id = id;
-        this.productId = productId;
+        this.product = product;
         this.quantity = quantity;
         this.stockStatus = stockStatus;
     }
@@ -25,12 +25,12 @@ public class Inventory {
         this.id = id;
     }
 
-    public long getProductId() {
-        return productId;
+    public Product getProduct() {
+        return product;
     }
 
-    public void setProductId(long productId) {
-        this.productId = productId;
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
     public int getQuantity() {

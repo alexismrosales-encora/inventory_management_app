@@ -1,16 +1,17 @@
 package com.breakabletoy.ima_backend.dto;
 
+import com.breakabletoy.ima_backend.entity.Product;
 import com.breakabletoy.ima_backend.enums.StockStatus;
 
 public class InventoryDTO {
     private Long id;
-    private Long productId;
+    private ProductDTO product;
     private int quantity;
     private StockStatus stockStatus;
 
-    public InventoryDTO(long id, long productId, int quantity, StockStatus stockStatus) {
+    public InventoryDTO(long id, ProductDTO product, int quantity, StockStatus stockStatus) {
         this.id = id;
-        this.productId = productId;
+        this.product = product;
         this.quantity = quantity;
         this.stockStatus = stockStatus;
     }
@@ -23,12 +24,12 @@ public class InventoryDTO {
         this.id = id;
     }
 
-    public Long getProductId() {
-        return productId;
+    public ProductDTO getProduct() {
+        return product;
     }
 
-    public void setProductId(Long productId) {
-        this.productId = productId;
+    public void setProduct(ProductDTO product) {
+        this.product = product;
     }
 
     public int getQuantity() {
