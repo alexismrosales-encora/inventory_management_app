@@ -4,7 +4,7 @@ import com.breakabletoy.ima_backend.dto.ProductDTO;
 import com.breakabletoy.ima_backend.entity.Product;
 
 public class ProductMapper {
-    public ProductDTO mapToProductDto(Product product) {
+    public static ProductDTO mapToProductDto(Product product) {
         return new ProductDTO(
                 product.getId(),
                 product.getName(),
@@ -14,7 +14,7 @@ public class ProductMapper {
         );
     }
 
-    public Product mapToProduct(ProductDTO productDTO) {
+    public static Product mapToProduct(ProductDTO productDTO) {
         return new Product(
                 productDTO.getId(),
                 productDTO.getName(),
