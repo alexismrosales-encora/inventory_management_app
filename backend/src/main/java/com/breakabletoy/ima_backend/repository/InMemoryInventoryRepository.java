@@ -1,12 +1,15 @@
 package com.breakabletoy.ima_backend.repository;
 
+import com.breakabletoy.ima_backend.dto.PaginationRequestDTO;
 import com.breakabletoy.ima_backend.entity.Inventory;
 import com.breakabletoy.ima_backend.entity.Product;
 import com.breakabletoy.ima_backend.enums.StockStatus;
+import org.springframework.stereotype.Repository;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
+@Repository
 public class InMemoryInventoryRepository implements InventoryRepository {
     private final Map<Long, Inventory> inventoryMap = new HashMap<>();
     private final AtomicLong counter = new AtomicLong();
@@ -16,9 +19,9 @@ public class InMemoryInventoryRepository implements InventoryRepository {
     }
 
     public Inventory save(Inventory inventory) {
-        if(inventory.getId() == -1) {
-            inventory.setId(counter.incrementAndGet());
-        }
+        inventory.setId(counter.get());
+        Product product = inventory.getProduct();
+        product.setId(counter.getAndIncrement());
         inventoryMap.put(inventory.getId(), inventory);
         return inventory;
     }
@@ -27,7 +30,11 @@ public class InMemoryInventoryRepository implements InventoryRepository {
         inventoryMap.remove(id);
     }
 
-    public List<Inventory> findByCategoryIn(List<String> categories, Long page, Long size, String sortBy, String sortOrder) {
+    public List<Inventory> findAll(PaginationRequestDTO paginationRequestDTO) {
+        return new ArrayList<>(inventoryMap.values());
+    }
+
+    public List<Inventory> findByCategoryIn(List<String> categories, PaginationRequestDTO paginationRequestDTO) {
         List<Inventory> inventoryList = new ArrayList<>();
         for (Inventory inventory : inventoryMap.values()) {
             Product product = inventory.getProduct();
@@ -38,7 +45,7 @@ public class InMemoryInventoryRepository implements InventoryRepository {
         return inventoryList;
     }
 
-    public List<Inventory> findInStockProducts(Long page, Long size, String sortBy, String sortOrder) {
+    public List<Inventory> findInStockProducts(PaginationRequestDTO paginationRequestDTO) {
         List<Inventory> inventoryList = new ArrayList<>();
         for (Inventory inventory : inventoryMap.values()) {
             if(inventory.getStockStatus() == StockStatus.IN_STOCK) {
@@ -48,7 +55,7 @@ public class InMemoryInventoryRepository implements InventoryRepository {
         return inventoryList;
     }
 
-    public List<Inventory> findLowStockProducts(Long page, Long size, String sortBy, String sortOrder) {
+    public List<Inventory> findLowStockProducts(PaginationRequestDTO paginationRequestDTO) {
         List<Inventory> inventoryList = new ArrayList<>();
         for (Inventory inventory : inventoryMap.values()) {
             if(inventory.getStockStatus() == StockStatus.LOW_STOCK) {
@@ -58,7 +65,7 @@ public class InMemoryInventoryRepository implements InventoryRepository {
         return inventoryList;
     }
 
-    public List<Inventory> findOutOfStockProducts(Long page, Long size, String sortBy, String sortOrder) {
+    public List<Inventory> findOutOfStockProducts(PaginationRequestDTO paginationRequestDTO) {
         List<Inventory> inventoryList = new ArrayList<>();
         for (Inventory inventory : inventoryMap.values()) {
             if(inventory.getStockStatus() == StockStatus.OUT_OF_STOCK) {
@@ -68,8 +75,8 @@ public class InMemoryInventoryRepository implements InventoryRepository {
         return inventoryList;
     }
 
-    // Pending
-    private static List<Inventory> SortedPagination(List<Inventory> inventoryList, int page, int size, String sortBy, String sortOrder) {
-        return inventoryList.subList((page - 1) * size, (page + 1) * size);
+    // TODO: Update and sort depending on the type of sorting
+    private static List<Inventory> SortedPagination(List<Inventory> inventoryList, PaginationRequestDTO paginationRequestDTO) {
+        return inventoryList.subList((paginationRequestDTO.getPage() - 1) * paginationRequestDTO.getSize(), (paginationRequestDTO.getPage() + 1) * paginationRequestDTO.getSize());
     }
 }
