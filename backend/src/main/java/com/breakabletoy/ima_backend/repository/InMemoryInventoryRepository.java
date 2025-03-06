@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 @Repository
 public class InMemoryInventoryRepository implements InventoryRepository {
@@ -26,57 +27,71 @@ public class InMemoryInventoryRepository implements InventoryRepository {
         return inventory;
     }
 
+    public Inventory update(Long id, Inventory inventory) {
+        // TODO: manage exceptions
+        if (inventory == null || !inventoryMap.containsKey(id)) {
+            throw new IllegalArgumentException("Inventory ID not found for update");
+        }
+        inventoryMap.put(inventory.getId(), inventory);
+        return inventory;
+    }
+
+    public Inventory markOutOfStockById(Long id) {
+        Inventory inventory = inventoryMap.get(id);
+        inventory.setStockStatus(StockStatus.OUT_OF_STOCK);
+        return inventory;
+    }
+
+    public Inventory markInStockById(Long id) {
+        Inventory inventory = inventoryMap.get(id);
+        inventory.setStockStatus(StockStatus.IN_STOCK);
+        return inventory;
+    }
+
     public void deleteById(Long id) {
         inventoryMap.remove(id);
     }
 
     public List<Inventory> findAll(PaginationRequestDTO paginationRequestDTO) {
-        return new ArrayList<>(inventoryMap.values());
+        List<Inventory> filteredInventory = getFilteredInventory(paginationRequestDTO);
+        return getSortedInventory(paginationRequestDTO, filteredInventory);
     }
 
-    public List<Inventory> findByCategoryIn(List<String> categories, PaginationRequestDTO paginationRequestDTO) {
-        List<Inventory> inventoryList = new ArrayList<>();
-        for (Inventory inventory : inventoryMap.values()) {
-            Product product = inventory.getProduct();
-            if (categories.contains(product.getCategory())) {
-             inventoryList.add(inventory);
-            }
+    // TODO: Fix the search of the word in the case the search keyword exist with the prefix or something
+    // problem example: product1 = iPhone product2 = Computer, if keyword = i, there will be coincidence for product1 and product2
+    private List<Inventory> getFilteredInventory(PaginationRequestDTO paginationRequestDTO) {
+        String searchQuery = Optional.ofNullable(paginationRequestDTO.getSearch()).orElse("").toLowerCase();
+        StockStatus stockStatus = paginationRequestDTO.getStockStatus();
+        String category = paginationRequestDTO.getCategory();
+
+        return inventoryMap.values().stream()
+                .filter(inventory -> searchQuery.isEmpty() || inventory.getProduct().getName().toLowerCase().contains(searchQuery))
+                .filter(inventory -> stockStatus == null || inventory.getStockStatus() == stockStatus)
+                .filter(inventory -> category == null || inventory.getProduct().getCategory().equalsIgnoreCase(category))
+                .collect(Collectors.toList());
+    }
+
+    private List<Inventory> getSortedInventory(PaginationRequestDTO paginationRequest, List<Inventory> inventoryList) {
+        Comparator<Inventory> comparator = switch (paginationRequest.getSortBy().toLowerCase()) {
+            case "name" ->
+                    Comparator.comparing(i -> i.getProduct().getName(), Comparator.nullsLast(Comparator.naturalOrder()));
+            case "category" ->
+                    Comparator.comparing(i -> i.getProduct().getCategory(), Comparator.nullsLast(Comparator.naturalOrder()));
+            case "price" ->
+                    Comparator.comparing(i -> i.getProduct().getPrice(), Comparator.nullsLast(Comparator.naturalOrder()));
+            case "expirydate" ->
+                    Comparator.comparing(i -> i.getProduct().getExpiryDate(), Comparator.nullsLast(Comparator.naturalOrder()));
+            case "datecreated" ->
+                    Comparator.comparing(i -> i.getProduct().getDateCreate(), Comparator.nullsLast(Comparator.naturalOrder()));
+            default -> throw new IllegalArgumentException("Invalid sortBy field: " + paginationRequest.getSortBy());
+        };
+
+        if ("desc".equalsIgnoreCase(paginationRequest.getSortOrder())) {
+            comparator = comparator.reversed();
         }
-        return inventoryList;
-    }
 
-    public List<Inventory> findInStockProducts(PaginationRequestDTO paginationRequestDTO) {
-        List<Inventory> inventoryList = new ArrayList<>();
-        for (Inventory inventory : inventoryMap.values()) {
-            if(inventory.getStockStatus() == StockStatus.IN_STOCK) {
-                inventoryList.add(inventory);
-            }
-        }
-        return inventoryList;
-    }
+        inventoryList.sort(comparator);
 
-    public List<Inventory> findLowStockProducts(PaginationRequestDTO paginationRequestDTO) {
-        List<Inventory> inventoryList = new ArrayList<>();
-        for (Inventory inventory : inventoryMap.values()) {
-            if(inventory.getStockStatus() == StockStatus.LOW_STOCK) {
-                inventoryList.add(inventory);
-            }
-        }
         return inventoryList;
-    }
-
-    public List<Inventory> findOutOfStockProducts(PaginationRequestDTO paginationRequestDTO) {
-        List<Inventory> inventoryList = new ArrayList<>();
-        for (Inventory inventory : inventoryMap.values()) {
-            if(inventory.getStockStatus() == StockStatus.OUT_OF_STOCK) {
-                inventoryList.add(inventory);
-            }
-        }
-        return inventoryList;
-    }
-
-    // TODO: Update and sort depending on the type of sorting
-    private static List<Inventory> SortedPagination(List<Inventory> inventoryList, PaginationRequestDTO paginationRequestDTO) {
-        return inventoryList.subList((paginationRequestDTO.getPage() - 1) * paginationRequestDTO.getSize(), (paginationRequestDTO.getPage() + 1) * paginationRequestDTO.getSize());
     }
 }

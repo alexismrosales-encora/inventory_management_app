@@ -9,10 +9,9 @@ import java.util.Optional;
 public interface InventoryRepository {
     Optional<Inventory> findById(Long id);
     Inventory save(Inventory inventory);
+    Inventory update(Long id, Inventory inventory);
+    Inventory markOutOfStockById(Long id);
+    Inventory markInStockById(Long id);
     void deleteById(Long id);
     List<Inventory> findAll(PaginationRequestDTO paginationRequestDTO);
-    List<Inventory> findByCategoryIn(List<String> categories, PaginationRequestDTO paginationRequestDTO);
-    List<Inventory> findInStockProducts(PaginationRequestDTO paginationRequestDTO);
-    List<Inventory> findLowStockProducts(PaginationRequestDTO paginationRequestDTO);
-    List<Inventory> findOutOfStockProducts(PaginationRequestDTO paginationRequestDTO);
 }
