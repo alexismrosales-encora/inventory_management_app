@@ -1,6 +1,9 @@
+import SearchBar from '../components/SearchBar'
+import InventoryTable from '../components/ProductTable'
 const Inventory = () => {
   return <>
-    Hello world
+    <SearchBar />
+    <InventoryTable />
   </>
 }
 
