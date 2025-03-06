@@ -9,13 +9,17 @@ public class ProductDTO {
     private String category;
     private BigDecimal price;
     private LocalDate expiryDate;
+    private LocalDate dateCreated;
+    private LocalDate dateUpdated;
 
-    public ProductDTO(Long id, String name, String category, BigDecimal price, LocalDate expiryDate) {
+    public ProductDTO(Long id, String name, String category, BigDecimal price, LocalDate expiryDate, LocalDate dateCreated, LocalDate dateUpdated) {
         this.id = id;
         this.name = name;
         this.category = category;
         this.price = price;
         this.expiryDate = expiryDate;
+        this.dateCreated = dateCreated;
+        this.dateUpdated = dateUpdated;
     }
 
     public Long getId() {
@@ -56,5 +60,17 @@ public class ProductDTO {
 
     public void setExpiryDate(LocalDate expiryDate) {
         this.expiryDate = expiryDate;
+    }
+
+    public LocalDate getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(LocalDate dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
+    public LocalDate getDateUpdated() {
+        return dateUpdated;
     }
 }

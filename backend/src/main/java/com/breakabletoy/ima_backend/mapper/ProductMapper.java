@@ -10,7 +10,9 @@ public class ProductMapper {
                 product.getName(),
                 product.getCategory(),
                 product.getPrice(),
-                product.getExpiryDate()
+                product.getExpiryDate(),
+                product.getDateCreate(),
+                product.getDateUpdate()
         );
     }
 
@@ -20,7 +22,9 @@ public class ProductMapper {
                 productDTO.getName(),
                 productDTO.getCategory(),
                 productDTO.getPrice(),
-                productDTO.getExpiryDate()
+                productDTO.getExpiryDate(),
+                productDTO.getDateCreated(),
+                productDTO.getDateUpdated()
         );
     }
 }

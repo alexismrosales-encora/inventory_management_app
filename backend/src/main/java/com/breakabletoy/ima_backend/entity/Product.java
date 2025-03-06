@@ -8,15 +8,19 @@ public class Product {
     private String category;
     private BigDecimal price;
     private LocalDate expiryDate;
+    private LocalDate dateCreate;
+    private LocalDate dateUpdate;
 
     public Product() {}
 
-    public Product(Long id, String name, String category, BigDecimal price, LocalDate expiryDate) {
+    public Product(Long id, String name, String category, BigDecimal price, LocalDate expiryDate, LocalDate dateCreate, LocalDate dateUpdate) {
         this.id = id;
         this.name = name;
         this.category = category;
         this.price = price;
         this.expiryDate = expiryDate;
+        this.dateCreate = dateCreate;
+        this.dateUpdate = dateUpdate;
     }
 
     public Long getId() {
@@ -57,6 +61,22 @@ public class Product {
 
     public void setExpiryDate(LocalDate expiryDate) {
         this.expiryDate = expiryDate;
+    }
+
+    public LocalDate getDateCreate() {
+        return dateCreate;
+    }
+
+    public void setDateCreate(LocalDate dateCreate) {
+        this.dateCreate = dateCreate;
+    }
+
+    public LocalDate getDateUpdate() {
+        return dateUpdate;
+    }
+
+    public void setDateUpdate(LocalDate dateUpdate) {
+        this.dateUpdate = dateUpdate;
     }
 
     @Override
