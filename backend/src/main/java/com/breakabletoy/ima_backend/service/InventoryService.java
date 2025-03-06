@@ -32,4 +32,28 @@ public class InventoryService implements IInventoryService {
         List<Inventory> inventory =  inventoryRepository.findAll(paginationRequestDTO);
         return inventory.stream().map((inventoryItem) -> InventoryMapper.mapToInventoryDto(inventoryItem)).collect(Collectors.toList());
     }
+
+    @Override
+    public InventoryDTO updateProduct(Long id, InventoryDTO inventoryDTO) {
+        Inventory inventoryItem = InventoryMapper.mapToInventory(inventoryDTO);
+        Inventory updatedInventoryItem = inventoryRepository.update(id, inventoryItem);
+        return InventoryMapper.mapToInventoryDto(updatedInventoryItem);
+    }
+
+    @Override
+    public InventoryDTO updateProductOutOfStock(Long id) {
+        Inventory updatedInventoryItem = inventoryRepository.markOutOfStockById(id);
+        return InventoryMapper.mapToInventoryDto(updatedInventoryItem);
+    }
+
+    @Override
+    public InventoryDTO updateProductInStock(Long id) {
+        Inventory updatedInventoryItem = inventoryRepository.markInStockById(id);
+        return InventoryMapper.mapToInventoryDto(updatedInventoryItem);
+    }
+
+    @Override
+    public void deleteProduct(Long id) {
+        inventoryRepository.deleteById(id);
+    }
 }

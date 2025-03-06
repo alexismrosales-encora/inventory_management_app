@@ -9,5 +9,8 @@ import java.util.List;
 public interface IInventoryService {
     InventoryDTO createProduct(InventoryDTO inventoryDTO);
     List<InventoryDTO> getInventory(PaginationRequestDTO paginationRequestDTO);
-    // TODO: Add methods to delete and update a product
+    InventoryDTO updateProduct(Long id, InventoryDTO inventoryDTO);
+    InventoryDTO updateProductOutOfStock(Long id);
+    InventoryDTO updateProductInStock(Long id);
+    void deleteProduct(Long id);
 }

@@ -2,6 +2,7 @@ package com.breakabletoy.ima_backend.controller;
 
 import com.breakabletoy.ima_backend.dto.InventoryDTO;
 import com.breakabletoy.ima_backend.dto.PaginationRequestDTO;
+import com.breakabletoy.ima_backend.enums.StockStatus;
 import com.breakabletoy.ima_backend.service.InventoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin("")
+@CrossOrigin("*")
 @RestController
 @RequestMapping(value = "/api/products")
 public class InventoryController {
@@ -21,20 +22,48 @@ public class InventoryController {
         this.inventoryService = inventoryService;
     }
 
+    @GetMapping()
+    public ResponseEntity<List<InventoryDTO>> findAllInventoryItems(@RequestParam(defaultValue = "0") int page,
+                                                                    @RequestParam(defaultValue = "10") int size,
+                                                                    @RequestParam(defaultValue = "name") String sortBy,
+                                                                    @RequestParam(defaultValue = "asc") String sortOrder,
+                                                                    @RequestParam(required = false)StockStatus stockStatus,
+                                                                    @RequestParam(required = false) String category,
+                                                                    @RequestParam(required = false) String search) {
+        PaginationRequestDTO savedPaginationRequestDTO;
+        savedPaginationRequestDTO = new PaginationRequestDTO(page, size, sortBy, sortOrder, stockStatus, category, search);
+        List<InventoryDTO> getInventory = inventoryService.getInventory(savedPaginationRequestDTO);
+        return ResponseEntity.ok(getInventory);
+    }
+
     @PostMapping()
-    public ResponseEntity<InventoryDTO> createInventory(@RequestBody InventoryDTO inventoryDTO) {
+    public ResponseEntity<InventoryDTO> createInventoryItem(@RequestBody InventoryDTO inventoryDTO) {
         InventoryDTO savedInventoryItem = inventoryService.createProduct(inventoryDTO);
         return new ResponseEntity<>(savedInventoryItem, HttpStatus.CREATED);
     }
 
-    @GetMapping()
-    // TODO: Modify the request body and use request params instead
-    public ResponseEntity<List<InventoryDTO>> findAll(@RequestBody PaginationRequestDTO paginationRequestDTO) {
-        List<InventoryDTO> getInventory = inventoryService.getInventory(paginationRequestDTO);
-        return ResponseEntity.ok(getInventory);
+
+    @PutMapping("/{id}")
+    public ResponseEntity<InventoryDTO> updateInventoryItem(@PathVariable Long id, @RequestBody InventoryDTO inventoryDTO) {
+        InventoryDTO updatedInventoryItem = inventoryService.updateProduct(id,inventoryDTO);
+        return new ResponseEntity<>(updatedInventoryItem, HttpStatus.OK);
     }
 
-    // TODO: Add method to update a product by id
-    // TODO: Add method to mark a product out of stock
-    // TODO: Add method to mark a product in stock
+    @PostMapping( "/{id}/outofstock")
+    public ResponseEntity<InventoryDTO> updateInventoryItemOutOfStock(@PathVariable Long id) {
+        InventoryDTO updateInventoryItemOutOfStock = inventoryService.updateProductOutOfStock(id);
+        return new ResponseEntity<>(updateInventoryItemOutOfStock, HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}/instock")
+    public ResponseEntity<InventoryDTO> updateInventoryItemInStock(@PathVariable Long id) {
+        InventoryDTO updateInventoryItemInStock = inventoryService.updateProductInStock(id);
+        return new ResponseEntity<>(updateInventoryItemInStock, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteInventoryItem(@PathVariable Long id) {
+        inventoryService.deleteProduct(id);
+        return ResponseEntity.noContent().build();
+    }
 }
