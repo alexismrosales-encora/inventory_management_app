@@ -16,4 +16,20 @@ export interface InventoryItem {
   stockStatus: StockStatus,
 }
 
+export interface PaginatedResponse {
+  items: InventoryItem[],
+  totalItems: number
+}
 
+export interface Pagination {
+  page: number,
+  size: number,
+  sortBy: string,
+  sortOrder: string,
+}
+
+export interface Filters {
+  search: string,
+  category: string,
+  stockStatus: StockStatus | null
+}
