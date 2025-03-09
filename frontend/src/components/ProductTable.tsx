@@ -1,11 +1,11 @@
-import { ProductRowHeader, ProductRow } from './ProductRow'
+import { ProductRowHeader, ProductRows } from './ProductRow'
 const ProductTable = () => {
   return <table>
     <thead>
       <ProductRowHeader />
     </thead>
     <tbody>
-      <ProductRow />
+      <ProductRows />
     </tbody>
   </table>
 }
