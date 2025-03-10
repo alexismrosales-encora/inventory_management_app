@@ -1,25 +1,21 @@
 import { useContext, useEffect, useState } from "react"
 import inventoryService from "../services/inventory.service"
 import { InventoryItem, Pagination } from "../types/inventory"
-import { FilterContext, PaginationContext } from "../context/InventoryContext";
+import { InventoryContext } from "../context/InventoryContext";
 
 export const ProductRows = () => {
   const [inventoryItems, setInventoryItems] = useState<InventoryItem[]>([]);
   const [totalItemsState, setTotalItemsState] = useState<number>(0);
 
 
-  const filterContext = useContext(FilterContext)
-  if (!filterContext) {
-    return null
-  }
-  const paginationContext = useContext(PaginationContext)
-  if (!paginationContext) {
+  const context = useContext(InventoryContext)
+  if (!context) {
     return null
   }
 
-  const { filters } = filterContext
-  const { currentPage, totalItems, setTotalItems } = paginationContext.paginationFilterType
-  const { pageSize } = paginationContext.paginationSizeType
+  const { filters } = context.filterContext
+  const { currentPage, totalItems, setTotalItems } = context.paginationContext.paginationFilterType
+  const { pageSize } = context.paginationContext.paginationSizeType
 
 
   useEffect(() => {

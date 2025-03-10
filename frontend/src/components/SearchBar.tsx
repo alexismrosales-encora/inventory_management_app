@@ -1,17 +1,17 @@
 import { StockStatusList } from '../utils/inventory.utils'
-import { FilterContext } from '../context/InventoryContext'
+import { InventoryContext } from '../context/InventoryContext'
 import { useContext, useEffect, useState } from 'react';
 import inventoryService from '../services/inventory.service';
 const SearchBar = () => {
   const [categoriesState, setCategoriesState] = useState<string[]>([])
   const statusList = StockStatusList()
   // using context
-  const context = useContext(FilterContext)
+  const context = useContext(InventoryContext)
   if (!context) {
     return null
   }
 
-  const { filters, setFilters } = context;
+  const { filters, setFilters } = context.filterContext;
 
   const handleSearchTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFilters({ ...filters, search: e.target.value })
@@ -35,7 +35,7 @@ const SearchBar = () => {
     <form>
       <label>
         Search and item:
-        <input type="text" id="itemName" name="SearchText" value={filters.search} onChange={handleSearchTextChange} />
+        <input type="text" id="itemName" name="searchText" value={filters.search} onChange={handleSearchTextChange} />
       </label>
 
       <label>

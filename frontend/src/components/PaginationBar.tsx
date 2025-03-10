@@ -1,18 +1,17 @@
 import { useContext, useEffect, useState } from "react"
-import { PaginationContext } from "../context/InventoryContext"
+import { InventoryContext } from "../context/InventoryContext"
 
 export const PaginationBar = () => {
   const [currentPageState, setCurrentPageState] = useState<number>(1)
   const [totalItemsArray, setTotalItemsArray] = useState<number[]>([])
   // Se necesita hacer el react context que pase el tamaño de la pagina de la tabla al pagination component
-  const context = useContext(PaginationContext)
+  const context = useContext(InventoryContext)
   if (!context) {
     return null
   }
 
-  const { totalItems, setCurrentPage } = context.paginationFilterType
-  const { pageSize } = context.paginationSizeType
-
+  const { totalItems, setCurrentPage } = context.paginationContext.paginationFilterType
+  const { pageSize } = context.paginationContext.paginationSizeType
 
   const handlePageButton = (pageNumber: number) => {
     setCurrentPageState(pageNumber)
