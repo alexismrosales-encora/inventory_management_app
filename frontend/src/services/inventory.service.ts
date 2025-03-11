@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-import { Filters, InventoryItem, PaginatedResponse, Pagination } from '../types/inventory'
+import { Filters, InventoryItem, MetricsType, PaginatedResponse, Pagination } from '../types/inventory'
 import { StockStatus } from '../utils/inventory.utils'
 
 const API_URL = import.meta.env.VITE_API_BASEURL + '/products'
@@ -8,6 +8,11 @@ const API_URL = import.meta.env.VITE_API_BASEURL + '/products'
 
 const createInventoryItem = async (inventoryItem: InventoryItem): Promise<InventoryItem> => {
   const response = await axios.post<InventoryItem>(API_URL, inventoryItem)
+  return response.data
+}
+
+const updateInventoryItem = async (id: number): Promise<InventoryItem> => {
+  const response = await axios.post<InventoryItem>(API_URL + `/${id}`)
   return response.data
 }
 
@@ -28,10 +33,17 @@ const getCategories = async (): Promise<string[]> => {
   return response.data
 }
 
+const getMetrics = async (): Promise<MetricsType> => {
+  const response = await axios.get(API_URL + '/metrics')
+  return response.data
+}
+
 const inventoryService = {
   createInventoryItem,
+  updateInventoryItem,
   getAllItems,
-  getCategories
+  getCategories,
+  getMetrics
 }
 
 export default inventoryService
