@@ -48,7 +48,8 @@ const ProductForm = ({ productToEdit, onClose }: ProductFormProps) => {
     }
 
     if (productToEdit) {
-      inventoryService.updateInventoryItem(productToEdit.id)
+      inventoryService.updateInventoryItem(inventory.id, inventory)
+      console.log("Item sent as: ", inventory)
     } else {
       inventoryService.createInventoryItem(inventory)
     }
@@ -86,7 +87,7 @@ const ProductForm = ({ productToEdit, onClose }: ProductFormProps) => {
         <input type="date" name="expirationDate" value={selectedDate ? selectedDate.toString() : "N/A"} onChange={(e) => setSelectedDate(e.target.value ? new Date(e.target.value) : null)} />
       </label>
       <button type="submit" onClick={handleSumbit}>Save</button>
-      <button type="button">Cancel</button>
+      <button type="button" onClick={onClose}>Cancel</button>
     </form>
   </div>
 }
