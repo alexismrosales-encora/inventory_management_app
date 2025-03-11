@@ -24,28 +24,37 @@ interface PaginationActionsType {
   paginationSizeType: PaginationSizeType,
 }
 
+interface TriggerTableUpdateType {
+  shouldUpdateTable: boolean,
+  setShouldUpdateTable: React.Dispatch<React.SetStateAction<boolean>>
+}
+
 interface InventoryContextType {
   filterContext: FilterContextType,
   paginationContext: PaginationActionsType
+  triggerTableUpdateType: TriggerTableUpdateType
 }
-export const InventoryContext = createContext<InventoryContextType | null>(null);
+
+export const InventoryContext = createContext<InventoryContextType | null>(null)
 
 export const InventoryProvider = ({ children }: { children: React.ReactNode }) => {
   const [filters, setFilters] = useState<Filters>({
     search: "",
     category: "",
     stockStatus: null,
-  });
+  })
 
-  // Estados de paginación
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalItems, setTotalItems] = useState(0);
-  const [pageSize, setPageSize] = useState(pageSizes[1]);
+
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalItems, setTotalItems] = useState(0)
+  const [pageSize, setPageSize] = useState(pageSizes[1])
+
+  const [updateTable, setUpdateTable] = useState(false)
 
   const filterContext: FilterContextType = {
     filters,
     setFilters,
-  };
+  }
 
   const paginationContext: PaginationActionsType = {
     paginationFilterType: {
@@ -58,10 +67,15 @@ export const InventoryProvider = ({ children }: { children: React.ReactNode }) =
       pageSize,
       setPageSize,
     },
-  };
+  }
+
+  const tableUpdateContext: TriggerTableUpdateType = {
+    shouldUpdateTable: updateTable,
+    setShouldUpdateTable: setUpdateTable
+  }
 
   return (
-    <InventoryContext.Provider value={{ filterContext, paginationContext }}>
+    <InventoryContext.Provider value={{ filterContext, paginationContext, triggerTableUpdateType: tableUpdateContext }}>
       {children}
     </InventoryContext.Provider>
   )
