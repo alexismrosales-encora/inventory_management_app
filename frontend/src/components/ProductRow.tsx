@@ -16,6 +16,8 @@ export const ProductRows = () => {
   const { filters } = context.filterContext
   const { currentPage, totalItems, setTotalItems } = context.paginationContext.paginationFilterType
   const { pageSize } = context.paginationContext.paginationSizeType
+  const { shouldUpdateTable, setShouldUpdateTable } = context.triggerTableUpdateType
+  const { setShouldOpenForm, setItem } = context.toggleForCreateAndEditProduct
 
 
   useEffect(() => {
@@ -32,11 +34,21 @@ export const ProductRows = () => {
         setTotalItemsState(response.totalItems)
       }
     )
-  }, [filters, currentPage, pageSize])
+  }, [filters, currentPage, pageSize, shouldUpdateTable])
 
   useEffect(() => {
-    setTotalItems(totalItemsState);
+    setTotalItems(totalItemsState)
   }, [inventoryItems, totalItemsState, totalItems])
+
+  const handleEditButton = (item: InventoryItem) => {
+    setShouldOpenForm(true) // Trigger Form
+    setItem(item) // Pass form to the context
+  }
+
+  const handleDeleteButton = (id: number) => {
+    setShouldUpdateTable(true) // Trigger update
+    inventoryService.deleteInventoryItem(id) // Delete item
+  }
 
   return <>
     {inventoryItems.map((item) => (
@@ -44,9 +56,12 @@ export const ProductRows = () => {
         <td>{item.product.category}</td>
         <td>{item.product.name}</td>
         <td>{item.product.price}</td>
-
-        <td>{item.product.expiryDate.toString()}</td>
+        <td>{item.product.expiryDate ? item.product.expiryDate.toString() : "N/A"}</td>
         <td>{item.quantity}</td>
+        <td>
+          <button type="button" onClick={() => handleEditButton(item)}>Edit</button>
+          <button type="button" onClick={() => handleDeleteButton(item.id)}>Delete</button>
+        </td>
       </tr>
     ))}
   </>
