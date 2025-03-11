@@ -1,10 +1,12 @@
 import { StockStatus } from '../utils/inventory.utils.ts'
+
+// TODO: Change all types name ending with Type to make it more flexible
 export interface Product {
   id: number,
   name: string,
   category: string,
   price: number,
-  expiryDate: Date,
+  expiryDate: Date | null,
   dateCreated: Date,
   dateUpdated: Date
 }
@@ -32,4 +34,17 @@ export interface Filters {
   search: string,
   category: string,
   stockStatus: StockStatus | null
+}
+
+export interface CategoryMetricType {
+  category: string,
+  totalProductsInStock: number,
+  totalValueInStock: number,
+  averagePriceInStock: number
+}
+
+export interface MetricsType {
+  totalValueInStock: number,
+  averagePriceInStock: number,
+  categoryMetrics: CategoryMetricType[]
 }
