@@ -2,10 +2,10 @@ import SearchBar from '../components/SearchBar'
 import InventoryTable from '../components/ProductTable'
 import TablePageResizer from '../components/TablePageResizer'
 import PaginationBar from '../components/PaginationBar'
-import ProductForm from '../components/ProductForm'
+import ShowProductForm from '../components/ShowProductForm'
+import MetricsTable from '../components/MetricsTable'
 
 import { InventoryProvider } from '../context/InventoryContext'
-import MetricsTable from '../components/MetricsTable'
 
 
 const Inventory = () => {
@@ -15,6 +15,7 @@ const Inventory = () => {
       <InventoryTable />
       <TablePageResizer />
       <PaginationBar />
+      <ShowProductForm />
       <MetricsTable />
     </InventoryProvider>
   );
