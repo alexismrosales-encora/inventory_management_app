@@ -1,5 +1,5 @@
 import React, { createContext, useState } from 'react'
-import { Filters } from '../types/inventory'
+import { Filters, InventoryItem } from '../types/inventory'
 import { pageSizes } from '../utils/inventory.utils'
 
 interface FilterContextType {
@@ -29,10 +29,18 @@ interface TriggerTableUpdateType {
   setShouldUpdateTable: React.Dispatch<React.SetStateAction<boolean>>
 }
 
+interface ToggleForCreateAndEditProduct {
+  shouldOpenForm: boolean,
+  setShouldOpenForm: React.Dispatch<React.SetStateAction<boolean>>,
+  item: InventoryItem | null,
+  setItem: React.Dispatch<React.SetStateAction<InventoryItem | null>>
+}
+
 interface InventoryContextType {
   filterContext: FilterContextType,
   paginationContext: PaginationActionsType
   triggerTableUpdateType: TriggerTableUpdateType
+  toggleForCreateAndEditProduct: ToggleForCreateAndEditProduct
 }
 
 export const InventoryContext = createContext<InventoryContextType | null>(null)
@@ -50,6 +58,9 @@ export const InventoryProvider = ({ children }: { children: React.ReactNode }) =
   const [pageSize, setPageSize] = useState(pageSizes[1])
 
   const [updateTable, setUpdateTable] = useState(false)
+
+  const [openForm, setOpenForm] = useState<boolean>(false)
+  const [item, setItem] = useState<InventoryItem | null>(null)
 
   const filterContext: FilterContextType = {
     filters,
@@ -74,8 +85,15 @@ export const InventoryProvider = ({ children }: { children: React.ReactNode }) =
     setShouldUpdateTable: setUpdateTable
   }
 
+  const toggleForCreateAndEditProductContext: ToggleForCreateAndEditProduct = {
+    shouldOpenForm: openForm,
+    setShouldOpenForm: setOpenForm,
+    item: item,
+    setItem: setItem
+  }
+
   return (
-    <InventoryContext.Provider value={{ filterContext, paginationContext, triggerTableUpdateType: tableUpdateContext }}>
+    <InventoryContext.Provider value={{ filterContext, paginationContext, triggerTableUpdateType: tableUpdateContext, toggleForCreateAndEditProduct: toggleForCreateAndEditProductContext }}>
       {children}
     </InventoryContext.Provider>
   )
