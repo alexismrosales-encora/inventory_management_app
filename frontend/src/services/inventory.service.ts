@@ -1,4 +1,5 @@
 import axios from 'axios'
+import qs from 'qs'
 
 import { Filters, InventoryItem, MetricsType, PaginatedResponse, Pagination } from '../types/inventory'
 import { StockStatus } from '../utils/inventory.utils'
@@ -28,6 +29,7 @@ const getAllItems = async (pagination: Pagination, filters: Filters): Promise<Pa
       ...filters,
       stockStatus: filters.stockStatus !== null ? StockStatus[filters.stockStatus] : null,
     },
+    paramsSerializer: (params) => qs.stringify(params, { arrayFormat: "repeat" }),
   });
   return response.data
 }
