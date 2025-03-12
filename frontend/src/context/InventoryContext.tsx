@@ -36,11 +36,25 @@ interface ToggleForCreateAndEditProduct {
   setItem: React.Dispatch<React.SetStateAction<InventoryItem | null>>
 }
 
+interface InventoryItemsType {
+  inventoryItems: InventoryItem[],
+  setInventoryItems: React.Dispatch<React.SetStateAction<InventoryItem[]>>
+}
+
+interface SortingContextType {
+  sortBy: string[];
+  setSortBy: React.Dispatch<React.SetStateAction<string[]>>;
+  sortOrder: string[];
+  setSortOrder: React.Dispatch<React.SetStateAction<string[]>>;
+}
+
 interface InventoryContextType {
-  filterContext: FilterContextType,
+  filterContext: FilterContextType
   paginationContext: PaginationActionsType
   triggerTableUpdateType: TriggerTableUpdateType
   toggleForCreateAndEditProduct: ToggleForCreateAndEditProduct
+  inventoryItems: InventoryItemsType
+  sortingContext: SortingContextType
 }
 
 export const InventoryContext = createContext<InventoryContextType | null>(null)
@@ -48,7 +62,7 @@ export const InventoryContext = createContext<InventoryContextType | null>(null)
 export const InventoryProvider = ({ children }: { children: React.ReactNode }) => {
   const [filters, setFilters] = useState<Filters>({
     search: "",
-    category: "",
+    categories: [],
     stockStatus: null,
   })
 
@@ -61,6 +75,9 @@ export const InventoryProvider = ({ children }: { children: React.ReactNode }) =
 
   const [openForm, setOpenForm] = useState<boolean>(false)
   const [item, setItem] = useState<InventoryItem | null>(null)
+  const [inventoryItems, setInventoryItems] = useState<InventoryItem[]>([])
+  const [sortBy, setSortBy] = useState(["datecreated"]);
+  const [sortOrder, setSortOrder] = useState<string[]>(["asc"]);
 
   const filterContext: FilterContextType = {
     filters,
@@ -92,8 +109,21 @@ export const InventoryProvider = ({ children }: { children: React.ReactNode }) =
     setItem: setItem
   }
 
+  const inventoryItemsContext: InventoryItemsType = {
+    inventoryItems: inventoryItems,
+    setInventoryItems: setInventoryItems
+  }
+  const sortingContext: SortingContextType = {
+    sortBy: sortBy,
+    setSortBy: setSortBy,
+    sortOrder: sortOrder,
+    setSortOrder: setSortOrder
+  }
+
+
+
   return (
-    <InventoryContext.Provider value={{ filterContext, paginationContext, triggerTableUpdateType: tableUpdateContext, toggleForCreateAndEditProduct: toggleForCreateAndEditProductContext }}>
+    <InventoryContext.Provider value={{ filterContext, paginationContext, triggerTableUpdateType: tableUpdateContext, toggleForCreateAndEditProduct: toggleForCreateAndEditProductContext, inventoryItems: inventoryItemsContext, sortingContext: sortingContext }}>
       {children}
     </InventoryContext.Provider>
   )
