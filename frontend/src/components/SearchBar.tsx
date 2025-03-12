@@ -18,7 +18,7 @@ const SearchBar = () => {
   }
 
   const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setFilters({ ...filters, category: e.target.value })
+    setFilters({ ...filters, categories: [e.target.value] })
   }
 
   const handleStockStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -40,7 +40,9 @@ const SearchBar = () => {
 
       <label>
         Category:
-        <select value={filters.category} onChange={handleCategoryChange}>
+        {// TODO: fix this value 
+        }
+        <select value={filters.categories[0]} onChange={handleCategoryChange}>
           <option value="">All</option>
           {categoriesState.map((category, index) => (
             <option key={index} value={category}>{category}</option>
