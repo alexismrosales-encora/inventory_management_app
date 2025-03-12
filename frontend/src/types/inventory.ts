@@ -26,13 +26,13 @@ export interface PaginatedResponse {
 export interface Pagination {
   page: number,
   size: number,
-  sortBy: string,
-  sortOrder: string,
+  sortBy: string[],
+  sortOrder: string[],
 }
 
 export interface Filters {
   search: string,
-  category: string,
+  categories: string[],
   stockStatus: StockStatus | null
 }
 
