@@ -1,1 +1,50 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import "tailwindcss";
+
+@layer base {
+  button {
+    @apply cursor-pointer;
+  }
+}
+
+@theme {
+  /* Primary color */
+  --color-primary-50:  #FBFCF8;
+  --color-primary-100: #F4F6EE;
+  --color-primary-200: #EAEEDD;
+  --color-primary-300: #E1E7D0;
+  --color-primary-400: #D7DEBF;
+  --color-primary-500: #CCD5AE;
+  --color-primary-600: #ACBB7C;
+  --color-primary-700: #899A50;
+  --color-primary-800: #596534;
+  --color-primary-900: #2D321A;
+
+  /* Gray scale colors*/
+  --color-gray-50:  #F5F5F5;
+  --color-gray-100: #EBEBEA;
+  --color-gray-200: #D6D7D5;
+  --color-gray-300: #C2C3C0;
+  --color-gray-400: #AEAFAB;
+  --color-gray-500: #9A9C97;
+  --color-gray-600: #7B7D77;
+  --color-gray-700: #5C5E5A;
+  --color-gray-800: #3E3F3C;
+  --color-gray-900: #363635;
+
+  /* Accent color */
+  --color-accent-50:  #FAF5EF;
+  --color-accent-100: #F7EDE4;
+  --color-accent-200: #EEDBC8;
+  --color-accent-300: #E5C7A9;
+  --color-accent-400: #DCB58E;
+  --color-accent-500: #D4A373;
+  --color-accent-600: #C48240;
+  --color-accent-700: #94612E;
+  --color-accent-800: #65421F;
+  --color-accent-900: #332110;
+
+  --font-inter: "Inter", sans-serif
+}
+
 

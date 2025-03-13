@@ -55,13 +55,14 @@ export const ProductRows = () => {
 
   return <>
     {inventoryItems.map((item) => (
-      <tr key={item.id}>
-        <td>{item.product.category}</td>
-        <td>{item.product.name}</td>
-        <td>{item.product.price}</td>
-        <td>{item.product.expiryDate ? item.product.expiryDate.toString() : "N/A"}</td>
-        <td>{item.quantity}</td>
-        <td>
+      <tr key={item.id} >
+        <td className="py-5 px-2"></td>
+        <td className="px-2">{item.product.category}</td>
+        <td className="px-2 max-w-[3rem] truncate whitespace-nowrap overflow-hidden">{item.product.name}</td>
+        <td className="px-2">{item.product.price}</td>
+        <td className="px-2">{item.product.expiryDate ? item.product.expiryDate.toString() : "N/A"}</td>
+        <td className="px-2">{item.quantity}</td>
+        <td className="px-2">
           <button type="button" onClick={() => handleEditButton(item)}>Edit</button>
           <button type="button" onClick={() => handleDeleteButton(item.id)}>Delete</button>
         </td>
@@ -72,18 +73,47 @@ export const ProductRows = () => {
 
 export const ProductRowHeader = () => {
   return <tr>
-    <th>Category <UpDownButtons sortBy="category" /> </th>
-    <th>Name <UpDownButtons sortBy="name" /> </th>
-    <th>Price <UpDownButtons sortBy="price" /></th>
-    <th>Expiration Date <UpDownButtons sortBy="expirydate" /></th>
-    <th>Stock <UpDownButtons sortBy="stock" /></th>
-    <th>Actions</th>
+    <th className="px-4 py-2 align-bottom"></th>
+    <th className="px-2 pt-2 align-bottom">
+      <div className="flex items-end justify-between">
+        <span className="font-medium pr-18">Category</span>
+        <UpDownButtons sortBy="category" />
+      </div>
+    </th>
+    <th className="px-2 pt-2 align-bottom">
+      <div className="flex items-end justify-between">
+        <span className="font-medium pr-40">Name</span>
+        <UpDownButtons sortBy="name" />
+      </div>
+    </th>
+    <th className="px-2 pt-2 align-bottom">
+      <div className="flex items-end justify-center space-x-2">
+        <span className="font-medium pr-18">Price</span>
+        <UpDownButtons sortBy="price" />
+      </div>
+    </th>
+    <th className="px-2 pt-2 alignt-bottom">
+      <div className="flex items-end justify-center space-x-2">
+        <span className="font-medium pr-15 whitespace-nowrap">Expiration Date</span>
+        <UpDownButtons sortBy="expirydate" />
+      </div>
+    </th>
+    <th className="px-2 pt-2 align-bottom">
+      <div className="flex items-end justify-center space-x-2">
+        <span className="font-medium pr-15">Stock</span>
+        <UpDownButtons sortBy="stock" />
+      </div>
+    </th>
+    <th className="px-2 pt-2 align-bottom">
+      <span className="font-medium pr-15">Actions</span>
+    </th>
   </tr>
 }
 
 interface UpDownButtonsProps {
   sortBy: string;
 }
+
 const UpDownButtons = ({ sortBy }: UpDownButtonsProps) => {
   const context = useContext(InventoryContext)
   // TODO: Order by default by date created
@@ -120,10 +150,8 @@ const UpDownButtons = ({ sortBy }: UpDownButtonsProps) => {
     setShouldUpdateTable(prev => !prev) // Updating table
   }
 
-  return <div>
-    <button type="button" onClick={handleNavArrowButton}>
-      <NavUpArrowIcon />
-      <NavDownArrowIcon />
-    </button>
-  </div>
+  return <button type="button" onClick={handleNavArrowButton}>
+    <NavUpArrowIcon />
+    <NavDownArrowIcon />
+  </button>
 }
