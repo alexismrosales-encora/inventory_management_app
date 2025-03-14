@@ -3,6 +3,7 @@ import inventoryService from "../services/inventory.service"
 import { InventoryItem, Pagination } from "../types/inventory"
 import { InventoryContext } from "../context/InventoryContext";
 import { NavUpArrowIcon, NavDownArrowIcon } from "./Icons"
+import { StockStatus } from "../utils/inventory.utils";
 
 
 
@@ -20,8 +21,9 @@ export const ProductRows = () => {
   const { shouldUpdateTable, setShouldUpdateTable } = context.triggerTableUpdateType
   const { setShouldOpenForm, setItem } = context.toggleForCreateAndEditProduct
   const { inventoryItems, setInventoryItems } = context.inventoryItems
-  const { sortBy, sortOrder } = context.sortingContext;
+  const { sortBy, sortOrder } = context.sortingContext
 
+  const [checkedItems, setCheckedItems] = useState<{ [key: number]: boolean }>({});
 
   useEffect(() => {
     // TODO: Configure items for pagination inputs
@@ -31,10 +33,18 @@ export const ProductRows = () => {
       sortBy,
       sortOrder
     }
+    console.log("Pagination object:", pagination);
     inventoryService.getAllItems(pagination, filters).then(
       (response) => {
         setInventoryItems(response.items)
         setTotalItemsState(response.totalItems)
+
+        // Mark items without stock
+        const initialCheckedState = response.items.reduce((acc, item) => {
+          acc[item.id] = item.stockStatus === StockStatus.OUT_OF_STOCK;
+          return acc;
+        }, {} as { [key: number]: boolean });
+        setCheckedItems(initialCheckedState);
       }
     )
   }, [filters, currentPage, pageSize, shouldUpdateTable, sortBy, sortOrder])
@@ -49,14 +59,45 @@ export const ProductRows = () => {
   }
 
   const handleDeleteButton = (id: number) => {
-    setShouldUpdateTable(true) // Trigger update
     inventoryService.deleteInventoryItem(id) // Delete item
+    setShouldUpdateTable(prev => !prev) // Trigger update
+  }
+
+  const handleUpdateStateButton = async (id: number) => {
+    const isChecked = !checkedItems[id];;
+
+    setCheckedItems((prev) => ({
+      ...prev,
+      [id]: isChecked
+    }));
+
+    try {
+      if (isChecked) {
+        await inventoryService.updateInventoryItemOutOfStock(id);
+      } else {
+        await inventoryService.updateInventoryItemInStock(id);
+      }
+
+      // trigger table update
+      setShouldUpdateTable(prev => !prev);
+    } catch (error) {
+      console.error("Error updating inventory:", error);
+    }
+
   }
 
   return <>
     {inventoryItems.map((item) => (
       <tr key={item.id} >
-        <td className="py-5 px-2"></td>
+        <td className="py-5 px-2">
+          <button
+            onClick={() => handleUpdateStateButton(item.id)}
+            className={`px-2 py-1 rounded-lg transition text-xs ${checkedItems[item.id] ? "bg-accent-500 text-white" : "bg-primary-600 text-white"
+              }`}
+          >
+            {checkedItems[item.id] ? "Out of Stock" : "In Stock"}
+          </button>
+        </td>
         <td className="px-2">{item.product.category}</td>
         <td className="px-2 max-w-[3rem] truncate whitespace-nowrap overflow-hidden">{item.product.name}</td>
         <td className="px-2">{item.product.price}</td>
@@ -129,22 +170,25 @@ const UpDownButtons = ({ sortBy }: UpDownButtonsProps) => {
 
     const index = newSortBy.indexOf(sortBy)
 
-    if (index === -1) {
-      // If the element is not in the list with max two columns
-      if (newSortBy.length < 2) {
-        newSortBy.push(sortBy)
-        newSortOrder.push("asc") // Starting with asc
-      }
-    } else {
-      // alternating with asc and desc
-      newSortOrder[index] = newSortOrder[index] === "asc" ? "desc" : "asc";
-
-      // if it was in desc, it is deleted (to deselect a column)
-      if (newSortOrder[index] === "desc" && newSortBy.length === 2) {
+    if (index !== -1) {
+      if (newSortOrder[index] === "desc") {
+        newSortOrder[index] = "asc";
+      } else if (newSortOrder[index] === "asc") {
+        // if it is asc it means is the last state so it is deleted from the array
         newSortBy.splice(index, 1);
         newSortOrder.splice(index, 1);
       }
+    } else {
+      if (newSortBy.length === 2) {
+        newSortBy.shift();
+        newSortOrder.shift();
+      }
+      newSortBy.push(sortBy);
+      newSortOrder.push("desc")
     }
+
+    console.log(newSortBy)
+    console.log(newSortOrder)
     setSortBy(newSortBy) // Field to order
     setSortOrder(newSortOrder) // update global context
     setShouldUpdateTable(prev => !prev) // Updating table
