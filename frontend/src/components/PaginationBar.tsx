@@ -1,40 +1,47 @@
 import { useContext, useEffect, useState } from "react"
 import { InventoryContext } from "../context/InventoryContext"
+import ReactPaginate from "react-paginate";
+
 
 export const PaginationBar = () => {
-  const [currentPageState, setCurrentPageState] = useState<number>(1)
-  const [totalItemsArray, setTotalItemsArray] = useState<number[]>([])
-  // Se necesita hacer el react context que pase el tamaño de la pagina de la tabla al pagination component
-  const context = useContext(InventoryContext)
-  if (!context) {
-    return null
-  }
+  const [currentPageState, setCurrentPageState] = useState<number>(0); // `react-paginate` usa índices desde 0
+  const context = useContext(InventoryContext);
 
-  const { totalItems, setCurrentPage } = context.paginationContext.paginationFilterType
-  const { pageSize } = context.paginationContext.paginationSizeType
+  if (!context) return null;
 
-  const handlePageButton = (pageNumber: number) => {
-    setCurrentPageState(pageNumber)
-  }
+  const { totalItems, setCurrentPage } = context.paginationContext.paginationFilterType;
+  const { pageSize } = context.paginationContext.paginationSizeType;
 
-  useEffect(() => {
-    setCurrentPageState(1)
-  }, [totalItems])
+  const pageCount = Math.ceil(totalItems / pageSize); // Total de páginas
+
+  const handlePageChange = ({ selected }: { selected: number }) => {
+    setCurrentPageState(selected);
+    setCurrentPage(selected + 1); // Ajuste porque react-paginate usa índices base 0
+  };
 
   useEffect(() => {
-    setCurrentPage(currentPageState)
-  }, [currentPageState])
+    setCurrentPageState(0);
+  }, [totalItems]);
 
-  useEffect(() => {
-    setTotalItemsArray(Array.from({ length: Math.ceil(totalItems / pageSize) }, (_, i) => i + 1))
-  }, [totalItems, pageSize])
-
-
-  return <nav>
-    {totalItemsArray.map((value, index) => (
-      <button type="button" key={index} onClick={() => handlePageButton(value)}>{value}</button>
-    ))}
-  </nav>
-}
+  return (
+    <nav className="flex justify-center mt-4">
+      <ReactPaginate
+        breakLabel="..."
+        nextLabel=">"
+        previousLabel="<"
+        onPageChange={handlePageChange}
+        pageRangeDisplayed={3}
+        marginPagesDisplayed={1}
+        pageCount={pageCount}
+        forcePage={currentPageState > Math.max(1, Math.ceil(totalItems / pageSize)) - 1 ? 0 : currentPageState}
+        containerClassName="flex items-center space-x-2 text-sm text-primary-700"
+        pageClassName="px-3 py-2 rounded-lg bg-primary-100 md:text-sm text-xs cursor-pointer hover:bg-primary-200 transition"
+        activeClassName="bg-primary-300"
+        nextClassName="px-3 py-2 md:text-sm text-xs rounded-lg text-primary-600 bg-primary-100 cursor-pointer hover:bg-primary-200"
+        previousClassName="px-3 py-2 md:text-sm text-xs rounded-lg text-primary-600 bg-primary-100 cursor-pointer hover:bg-primary-200"
+      />
+    </nav>
+  );
+};
 
 export default PaginationBar
