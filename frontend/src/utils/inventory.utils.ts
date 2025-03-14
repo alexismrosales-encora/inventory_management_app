@@ -1,6 +1,6 @@
 export enum StockStatus {
-  IN_STOCK,
-  OUT_OF_STOCK,
+  IN_STOCK = "IN_STOCK",
+  OUT_OF_STOCK = "OUT_OF_STOCK",
 }
 
 export const StockStatusMap: Record<StockStatus, string> = {
