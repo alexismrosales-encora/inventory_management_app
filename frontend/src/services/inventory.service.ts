@@ -17,8 +17,17 @@ const updateInventoryItem = async (id: number, inventoryItem: InventoryItem): Pr
   return response.data
 }
 
-const deleteInventoryItem = async (id: number) => {
+const deleteInventoryItem = async (id: number): Promise<void> => {
   await axios.delete(API_URL + `/${id}`)
+}
+
+
+const updateInventoryItemOutOfStock = async (id: number): Promise<void> => {
+  await axios.post(API_URL + `/${id}` + '/outofstock')
+}
+
+const updateInventoryItemInStock = async (id: number): Promise<void> => {
+  await axios.put(API_URL + `/${id}` + '/instock')
 }
 
 const getAllItems = async (pagination: Pagination, filters: Filters): Promise<PaginatedResponse> => {
@@ -44,10 +53,13 @@ const getMetrics = async (): Promise<MetricsType> => {
   return response.data
 }
 
+
 const inventoryService = {
   createInventoryItem,
   updateInventoryItem,
   deleteInventoryItem,
+  updateInventoryItemOutOfStock,
+  updateInventoryItemInStock,
   getAllItems,
   getCategories,
   getMetrics
