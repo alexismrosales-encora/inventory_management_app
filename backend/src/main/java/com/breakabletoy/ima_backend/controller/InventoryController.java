@@ -1,8 +1,10 @@
 package com.breakabletoy.ima_backend.controller;
 
 import com.breakabletoy.ima_backend.dto.InventoryDTO;
+import com.breakabletoy.ima_backend.dto.MetricsDTO;
 import com.breakabletoy.ima_backend.dto.PaginationRequestDTO;
 import com.breakabletoy.ima_backend.enums.StockStatus;
+import com.breakabletoy.ima_backend.response.PaginatedResponse;
 import com.breakabletoy.ima_backend.service.InventoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,18 +24,23 @@ public class InventoryController {
         this.inventoryService = inventoryService;
     }
 
+    // TODO: Change List<InventoryDTO> por paginatedResponse que incluya el numero de paginas
     @GetMapping()
-    public ResponseEntity<List<InventoryDTO>> findAllInventoryItems(@RequestParam(defaultValue = "0") int page,
-                                                                    @RequestParam(defaultValue = "10") int size,
-                                                                    @RequestParam(defaultValue = "name") String sortBy,
-                                                                    @RequestParam(defaultValue = "asc") String sortOrder,
-                                                                    @RequestParam(required = false)StockStatus stockStatus,
-                                                                    @RequestParam(required = false) String category,
-                                                                    @RequestParam(required = false) String search) {
+    public ResponseEntity<PaginatedResponse> findAllInventoryItems(@RequestParam(defaultValue = "0") int page,
+                                                                   @RequestParam(defaultValue = "10") int size,
+                                                                   @RequestParam(required = false) List<String> sortBy,
+                                                                   @RequestParam(required = false) List<String> sortOrder,
+                                                                   @RequestParam(required = false)StockStatus stockStatus,
+                                                                   @RequestParam(required = false) List<String> categories,
+                                                                   @RequestParam(required = false) String search) {
         PaginationRequestDTO savedPaginationRequestDTO;
-        savedPaginationRequestDTO = new PaginationRequestDTO(page, size, sortBy, sortOrder, stockStatus, category, search);
+        List<String> categoriesParam = (categories == null || categories.isEmpty()) ? null : categories;
+        String searchParam = (search == null || search.trim().isEmpty()) ? null : search;
+        savedPaginationRequestDTO = new PaginationRequestDTO(page, size, sortBy, sortOrder, stockStatus, categoriesParam, searchParam);
         List<InventoryDTO> getInventory = inventoryService.getInventory(savedPaginationRequestDTO);
-        return ResponseEntity.ok(getInventory);
+        long totalItems = inventoryService.getTotalItems();
+        PaginatedResponse paginatedResponse = new PaginatedResponse(getInventory, totalItems);
+        return ResponseEntity.ok(paginatedResponse);
     }
 
     @PostMapping()
@@ -65,5 +72,17 @@ public class InventoryController {
     public ResponseEntity<Void> deleteInventoryItem(@PathVariable Long id) {
         inventoryService.deleteProduct(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/categories")
+    public ResponseEntity<List<String>> findAllCategories() {
+        List<String> getCategories = inventoryService.getCategories();
+        return ResponseEntity.ok(getCategories);
+    }
+
+    @GetMapping("/metrics")
+    public ResponseEntity<MetricsDTO>  findAllMetrics() {
+        MetricsDTO metricsDTO = inventoryService.calculateMetrics();
+        return ResponseEntity.ok(metricsDTO);
     }
 }
