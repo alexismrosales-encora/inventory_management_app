@@ -24,7 +24,6 @@ public class InventoryController {
         this.inventoryService = inventoryService;
     }
 
-    // TODO: Change List<InventoryDTO> por paginatedResponse que incluya el numero de paginas
     @GetMapping()
     public ResponseEntity<PaginatedResponse> findAllInventoryItems(@RequestParam(defaultValue = "0") int page,
                                                                    @RequestParam(defaultValue = "10") int size,
