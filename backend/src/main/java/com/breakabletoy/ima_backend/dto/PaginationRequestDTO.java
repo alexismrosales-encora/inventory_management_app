@@ -2,24 +2,26 @@ package com.breakabletoy.ima_backend.dto;
 
 import com.breakabletoy.ima_backend.enums.StockStatus;
 
+import java.util.List;
+
 public class PaginationRequestDTO {
     private int page;
     private int size;
-    private String sortBy;
-    private String sortOrder;
+    private List<String> sortBy;
+    private List<String> sortOrder;
     private StockStatus stockStatus;
-    private String category;
+    private List<String> categories;
     private String search;
 
     public PaginationRequestDTO() {}
 
-    public PaginationRequestDTO(int page, int size, String sortBy, String sortOrder, StockStatus stockStatus, String category, String search) {
+    public PaginationRequestDTO(int page, int size, List<String> sortBy, List<String> sortOrder, StockStatus stockStatus, List<String> categories, String search) {
         this.page = page;
         this.size = size;
         this.sortBy = sortBy;
         this.sortOrder = sortOrder;
         this.stockStatus = stockStatus;
-        this.category = category;
+        this.categories = categories;
         this.search = search;
     }
 
@@ -39,19 +41,19 @@ public class PaginationRequestDTO {
         this.size = size;
     }
 
-    public String getSortBy() {
+    public List<String> getSortBy() {
         return sortBy;
     }
 
-    public void setSortBy(String sortBy) {
+    public void setSortBy(List<String> sortBy) {
         this.sortBy = sortBy;
     }
 
-    public String getSortOrder() {
+    public List<String> getSortOrder() {
         return sortOrder;
     }
 
-    public void setSortOrder(String sortOrder) {
+    public void setSortOrder(List<String> sortOrder) {
         this.sortOrder = sortOrder;
     }
 
@@ -63,12 +65,12 @@ public class PaginationRequestDTO {
         this.stockStatus = stockStatus;
     }
 
-    public String getCategory() {
-        return category;
+    public List<String> getCategories() {
+        return categories;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setCategories(List<String> categories) {
+        this.categories = categories;
     }
 
     public String getSearch() {
