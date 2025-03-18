@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react"
 import inventoryService from "../services/inventory.service"
 import { InventoryItem, Pagination } from "../types/inventory"
 import { InventoryContext } from "../context/InventoryContext";
-import { NavUpArrowIcon, NavDownArrowIcon } from "./Icons"
+import { NavUpArrowIcon, NavDownArrowIcon, EditProductIcon, DeleteProductIcon } from "./Icons"
 import { StockStatus } from "../utils/inventory.utils";
 
 
@@ -19,21 +19,19 @@ export const ProductRows = () => {
   const { currentPage, totalItems, setTotalItems } = context.paginationContext.paginationFilterType
   const { pageSize } = context.paginationContext.paginationSizeType
   const { shouldUpdateTable, setShouldUpdateTable } = context.triggerTableUpdateType
-  const { setShouldOpenForm, setItem } = context.toggleForCreateAndEditProduct
+  const { setShouldOpenForm, setItem, setDeleteConfirmation } = context.toggleForCreateAndEditProduct
   const { inventoryItems, setInventoryItems } = context.inventoryItems
   const { sortBy, sortOrder } = context.sortingContext
 
   const [checkedItems, setCheckedItems] = useState<{ [key: number]: boolean }>({});
 
   useEffect(() => {
-    // TODO: Configure items for pagination inputs
     const pagination: Pagination = {
       page: currentPage,
       size: pageSize,
       sortBy,
       sortOrder
     }
-    console.log("Pagination object:", pagination);
     inventoryService.getAllItems(pagination, filters).then(
       (response) => {
         setInventoryItems(response.items)
@@ -54,14 +52,15 @@ export const ProductRows = () => {
   }, [inventoryItems, totalItemsState, totalItems])
 
   const handleEditButton = (item: InventoryItem) => {
-    setShouldOpenForm(true) // Trigger Form
     setItem(item) // Pass form to the context
+    setShouldOpenForm(true) // Trigger Form
   }
 
-  const handleDeleteButton = (id: number) => {
-    inventoryService.deleteInventoryItem(id) // Delete item
-    setShouldUpdateTable(prev => !prev) // Trigger update
+  const handleDeleteButton = (item: InventoryItem) => {
+    setItem(item)
+    setDeleteConfirmation(true)
   }
+
 
   const handleUpdateStateButton = async (id: number) => {
     const isChecked = !checkedItems[id];;
@@ -83,12 +82,13 @@ export const ProductRows = () => {
     } catch (error) {
       console.error("Error updating inventory:", error);
     }
-
   }
 
   return <>
     {inventoryItems.map((item) => (
-      <tr key={item.id} >
+      <tr
+        key={item.id}
+        className={`${backgroundColorRows(item.product.expiryDate)} ${item.quantity <= 0 ? "relative line-through text-gray-500 border-b border-gray-500" : ""}`} >
         <td className="py-5 px-2">
           <button
             onClick={() => handleUpdateStateButton(item.id)}
@@ -101,11 +101,23 @@ export const ProductRows = () => {
         <td className="px-2">{item.product.category}</td>
         <td className="px-2 max-w-[3rem] truncate whitespace-nowrap overflow-hidden">{item.product.name}</td>
         <td className="px-2">{item.product.price}</td>
-        <td className="px-2">{item.product.expiryDate ? item.product.expiryDate.toString() : "N/A"}</td>
-        <td className="px-2">{item.quantity}</td>
+        <td className="px-2">{item.product.expiryDate ? item.product.expiryDate.toString() : undefined}</td>
+        <td className={"px-2 " + backgroundStockColorRows(item.quantity)}>{item.quantity}</td>
         <td className="px-2">
-          <button type="button" onClick={() => handleEditButton(item)}>Edit</button>
-          <button type="button" onClick={() => handleDeleteButton(item.id)}>Delete</button>
+          <div className="space-x-4 flex flex-row justify-center items-center">
+            <button
+              type="button"
+              className="border border-primary-500 rounded-lg p-1"
+              onClick={() => handleEditButton(item)}>
+              <EditProductIcon />
+            </button>
+            <button
+              type="button"
+              className="border border-primary-500 rounded-lg p-1"
+              onClick={() => handleDeleteButton(item)}>
+              <DeleteProductIcon />
+            </button>
+          </div>
         </td>
       </tr>
     ))}
@@ -113,8 +125,26 @@ export const ProductRows = () => {
 }
 
 export const ProductRowHeader = () => {
+  const context = useContext(InventoryContext)
+  if (!context) {
+    return null
+  }
+  const { markItemsConfirmation, setMarkItemsConfirmation } = context.inventoryItemsOutOfStockType
   return <tr>
-    <th className="px-4 py-2 align-bottom"></th>
+    <th className="px-2 pt-2 align-bottom">
+      <label className="flex space-x-2 items-end justify-between h-full">
+        <div className="items-center">
+          <input
+            type="checkbox"
+            checked={markItemsConfirmation}
+            onChange={() => setMarkItemsConfirmation(!markItemsConfirmation)}
+            className="p-2 appearance-none border border-gray-300 rounded-full checked:bg-primary-500 checked:border-transparent focus:outline-none"
+          />
+        </div>
+        <span className="font-medium flex items-center">All</span>
+      </label>
+
+    </th>
     <th className="px-2 pt-2 align-bottom">
       <div className="flex items-end justify-between">
         <span className="font-medium pr-18">Category</span>
@@ -187,8 +217,6 @@ const UpDownButtons = ({ sortBy }: UpDownButtonsProps) => {
       newSortOrder.push("desc")
     }
 
-    console.log(newSortBy)
-    console.log(newSortOrder)
     setSortBy(newSortBy) // Field to order
     setSortOrder(newSortOrder) // update global context
     setShouldUpdateTable(prev => !prev) // Updating table
@@ -199,3 +227,35 @@ const UpDownButtons = ({ sortBy }: UpDownButtonsProps) => {
     <NavDownArrowIcon />
   </button>
 }
+
+const backgroundColorRows = (itemExpiryDate: Date | null): string => {
+  // If the items is null it means it has no expiryDate
+  if (!itemExpiryDate) return "";
+
+  const expiryDate = new Date(itemExpiryDate);
+  const now = new Date();
+  const oneWeek = 7 * 24 * 60 * 60 * 1000;
+  const twoWeeks = 14 * 24 * 60 * 60 * 1000;
+
+  const timeDifference = expiryDate.getTime() - now.getTime();
+  if (timeDifference <= oneWeek) {
+    return "bg-red-100"; // Less than 7 days
+  } else if (timeDifference <= twoWeeks) {
+    return "bg-yellow-100"; // Between 7 and 14 days
+  } else {
+    return "bg-green-100"; // 14 days or more
+  }
+}
+
+const backgroundStockColorRows = (stock: number): string => {
+  if (stock < 5) {
+    return "bg-red-400"
+  } else if (stock >= 5 && stock <= 10) {
+    return "bg-orange-300"
+  }
+  return ""
+}
+
+
+
+

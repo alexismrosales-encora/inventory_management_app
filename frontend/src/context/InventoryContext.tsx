@@ -32,6 +32,8 @@ interface TriggerTableUpdateType {
 interface ToggleForCreateAndEditProduct {
   shouldOpenForm: boolean,
   setShouldOpenForm: React.Dispatch<React.SetStateAction<boolean>>,
+  deleteConfirmation: boolean,
+  setDeleteConfirmation: React.Dispatch<React.SetStateAction<boolean>>,
   item: InventoryItem | null,
   setItem: React.Dispatch<React.SetStateAction<InventoryItem | null>>
 }
@@ -43,9 +45,14 @@ interface InventoryItemsType {
 
 interface SortingContextType {
   sortBy: string[];
-  setSortBy: React.Dispatch<React.SetStateAction<string[]>>;
+  setSortBy: React.Dispatch<React.SetStateAction<string[]>>
   sortOrder: string[];
-  setSortOrder: React.Dispatch<React.SetStateAction<string[]>>;
+  setSortOrder: React.Dispatch<React.SetStateAction<string[]>>
+}
+
+interface InventoryItemsOutOfStockType {
+  markItemsConfirmation: boolean,
+  setMarkItemsConfirmation: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 interface InventoryContextType {
@@ -55,6 +62,7 @@ interface InventoryContextType {
   toggleForCreateAndEditProduct: ToggleForCreateAndEditProduct
   inventoryItems: InventoryItemsType
   sortingContext: SortingContextType
+  inventoryItemsOutOfStockType: InventoryItemsOutOfStockType
 }
 
 export const InventoryContext = createContext<InventoryContextType | null>(null)
@@ -78,6 +86,8 @@ export const InventoryProvider = ({ children }: { children: React.ReactNode }) =
   const [inventoryItems, setInventoryItems] = useState<InventoryItem[]>([])
   const [sortBy, setSortBy] = useState(["datecreated"]);
   const [sortOrder, setSortOrder] = useState<string[]>(["asc"]);
+  const [deleteConfirmation, setDeleteConfirmation] = useState(false)
+  const [markItemsConfirmation, setMarkItemsConfirmation] = useState(false)
 
   const filterContext: FilterContextType = {
     filters,
@@ -106,7 +116,9 @@ export const InventoryProvider = ({ children }: { children: React.ReactNode }) =
     shouldOpenForm: openForm,
     setShouldOpenForm: setOpenForm,
     item: item,
-    setItem: setItem
+    setItem: setItem,
+    deleteConfirmation: deleteConfirmation,
+    setDeleteConfirmation: setDeleteConfirmation
   }
 
   const inventoryItemsContext: InventoryItemsType = {
@@ -120,10 +132,15 @@ export const InventoryProvider = ({ children }: { children: React.ReactNode }) =
     setSortOrder: setSortOrder
   }
 
+  const inventoryItemsOutOfStockType: InventoryItemsOutOfStockType = {
+    markItemsConfirmation: markItemsConfirmation,
+    setMarkItemsConfirmation: setMarkItemsConfirmation
+  }
+
 
 
   return (
-    <InventoryContext.Provider value={{ filterContext, paginationContext, triggerTableUpdateType: tableUpdateContext, toggleForCreateAndEditProduct: toggleForCreateAndEditProductContext, inventoryItems: inventoryItemsContext, sortingContext: sortingContext }}>
+    <InventoryContext.Provider value={{ filterContext, paginationContext, triggerTableUpdateType: tableUpdateContext, toggleForCreateAndEditProduct: toggleForCreateAndEditProductContext, inventoryItems: inventoryItemsContext, sortingContext: sortingContext, inventoryItemsOutOfStockType }}>
       {children}
     </InventoryContext.Provider>
   )
