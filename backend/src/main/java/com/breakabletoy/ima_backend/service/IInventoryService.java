@@ -1,8 +1,8 @@
 package com.breakabletoy.ima_backend.service;
 
 import com.breakabletoy.ima_backend.dto.InventoryDTO;
+import com.breakabletoy.ima_backend.dto.MetricsDTO;
 import com.breakabletoy.ima_backend.dto.PaginationRequestDTO;
-import com.breakabletoy.ima_backend.entity.Inventory;
 
 import java.util.List;
 
@@ -13,4 +13,7 @@ public interface IInventoryService {
     InventoryDTO updateProductOutOfStock(Long id);
     InventoryDTO updateProductInStock(Long id);
     void deleteProduct(Long id);
+    List<String> getCategories();
+    long getTotalItems();
+    MetricsDTO calculateMetrics();
 }
