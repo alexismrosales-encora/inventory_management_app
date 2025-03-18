@@ -70,3 +70,22 @@ export const NewProductIcon = ({ width = 20, height = 20 }: IconProps) => {
     <path d="M13.3333 1.66666V4.4C13.3333 4.73137 13.6019 5 13.9333 5H16.6666" stroke="#65421F" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 }
+
+export const PlusIcon = ({ width = 20, height = 17 }: IconProps) => {
+  return <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox="0 0 20 17" fill="none">
+    <path d="M5 8.94638H10M15 8.94638H10M10 8.94638V4.94638M10 8.94638V12.9464" stroke="#ACBB7C" strokeWidth="1.5" strokeLinecap="round" stroke-linejoin="round" />
+  </svg>
+}
+
+export const EditProductIcon = ({ width = 20, height = 20 }: IconProps) => {
+  return <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox="0 0 20 20" fill="none">
+    <path d="M2.5 17.5L10 17.5H17.5" stroke="#ACBB7C" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M10.1847 4.85699L12.5417 2.49997L16.6665 6.62476L14.3095 8.98178M10.1847 4.85699L5.56134 9.48034C5.3738 9.66788 5.26845 9.92223 5.26845 10.1874L5.26845 13.898L8.97902 13.898C9.24424 13.898 9.49859 13.7927 9.68613 13.6051L14.3095 8.98178M10.1847 4.85699L14.3095 8.98178" stroke="#ACBB7C" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+}
+
+export const DeleteProductIcon = ({ width = 20, height = 20 }: IconProps) => {
+  return <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox="0 0 20 20" fill="none">
+    <path d="M5.63205 14.3689L10.0009 10M14.3698 5.63113L10.0009 10M10.0009 10L5.63205 5.63113M10.0009 10L14.3698 14.3689" stroke="#ACBB7C" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+}
