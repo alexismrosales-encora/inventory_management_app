@@ -5,11 +5,39 @@ import { StockStatus } from "../../utils/inventory.utils";
 import { InventoryContext } from "../../context/InventoryContext";
 import { PlusIcon } from "../../utils/icons";
 
+/**
+ * Props for the ProductForm component.
+ *
+ * @typedef {Object} ProductFormProps
+ * @property {InventoryItem | null} [productToEdit] - Optional product to edit; if null, the form is for creating a new product.
+ * @property {() => void} onClose - Function to call when closing the form.
+ */
 interface ProductFormProps {
   productToEdit?: InventoryItem | null; // Optional prop for editing
   onClose: () => void; // Function to close the form
 }
 
+/**
+ * ProductForm Component
+ *
+ * Renders a form to create or edit a product in the inventory. The form allows the user to input:
+ * - Product name
+ * - Category (select from existing categories or create a new one)
+ * - Stock quantity
+ * - Unit price
+ * - Expiration date
+ *
+ * On submission, the form validates the inputs and calls either an update or create method from the inventory service.
+ *
+ * @component
+ * @param {ProductFormProps} props - Component props.
+ * @returns {JSX.Element | null} The rendered form or null if InventoryContext is unavailable.
+ *
+ * @example
+ * return (
+ *   <ProductForm productToEdit={null} onClose={handleClose} />
+ * )
+ */
 const ProductForm = ({ productToEdit, onClose }: ProductFormProps) => {
   const tomorrow = new Date()
   tomorrow.setDate(tomorrow.getDate() + 1)
@@ -33,12 +61,24 @@ const ProductForm = ({ productToEdit, onClose }: ProductFormProps) => {
   const [isVisible, setIsVisible] = useState(false)
   const [allProductsAreValid, setAllProductsAreValid] = useState(true)
 
+  /**
+  * Fetches the list of product categories from the inventory service.
+  * The categories are updated whenever `shouldUpdateTable` changes.
+  */
   useEffect(() => {
     inventoryService.getCategories().then((response) => {
       setCategories(response)
     })
   }, [shouldUpdateTable])
-
+  /**
+  * Handles form submission.
+  *
+  * Validates that required fields are provided and calls the appropriate
+  * inventory service method to either update an existing product or create a new one.
+  * Triggers a table update and closes the form if successful.
+  *
+  * @param {React.FormEvent} e - The form submission event.
+  */
   const handleSumbit = (e: React.FormEvent) => {
     e.preventDefault()
     if (selectedName !== "" && selectedCategory !== "" && selectedStock !== 0 && selectedUnitPrice !== 0 && errorName === false) {
@@ -58,13 +98,14 @@ const ProductForm = ({ productToEdit, onClose }: ProductFormProps) => {
         stockStatus: StockStatus.IN_STOCK
       }
 
+      // Call the corresponding service method based on edit or creation mode
       if (productToEdit) {
         inventoryService.updateInventoryItem(inventory.id, inventory)
         console.log("Item sent as: ", inventory)
       } else {
         inventoryService.createInventoryItem(inventory)
       }
-      // trigger table to update it
+      // Trigger table update and close the form
       setShouldUpdateTable(prev => !prev)
       onClose()
     } else {
@@ -72,9 +113,19 @@ const ProductForm = ({ productToEdit, onClose }: ProductFormProps) => {
     }
   }
 
+  /**
+  * Toggles the visibility of the new category input.
+  */
   const handleNewCategoryButton = () => {
     setIsVisible(prev => !prev)
   }
+  /**
+  * Handles changes in the product name input.
+  *
+  * Validates that the input contains only allowed characters.
+  *
+  * @param {React.ChangeEvent<HTMLInputElement>} e - The change event from the product name input.
+  */
   const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedName(e.target.value)
     if (!validCharacters.test(selectedName)) {

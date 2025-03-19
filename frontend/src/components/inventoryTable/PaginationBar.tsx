@@ -3,8 +3,21 @@ import { InventoryContext } from "../../context/InventoryContext"
 import ReactPaginate from "react-paginate";
 
 
+/**
+ * PaginationBar Component
+ *
+ * Renders a pagination control using the "react-paginate" library.
+ * It calculates the total number of pages based on the total items and page size provided
+ * by the InventoryContext. It handles page changes and resets the pagination state when the total items change.
+ *
+ * @component
+ * @example
+ * return (
+ *   <PaginationBar />
+ * )
+ */
 export const PaginationBar = () => {
-  const [currentPageState, setCurrentPageState] = useState<number>(0); // `react-paginate` usa índices desde 0
+  const [currentPageState, setCurrentPageState] = useState<number>(0);
   const context = useContext(InventoryContext);
 
   if (!context) return null;
@@ -12,13 +25,23 @@ export const PaginationBar = () => {
   const { totalItems, setCurrentPage } = context.paginationContext.paginationFilterType;
   const { pageSize } = context.paginationContext.paginationSizeType;
 
-  const pageCount = Math.ceil(totalItems / pageSize); // Total de páginas
 
+  // Calculate the total number of pages
+  const pageCount = Math.ceil(totalItems / pageSize);
+
+  /**
+   * Handles page change events from react-paginate.
+   *
+   * @param {Object} param0 - An object containing the selected page index.
+   * @param {number} param0.selected - The selected page index (0-based).
+   */
   const handlePageChange = ({ selected }: { selected: number }) => {
     setCurrentPageState(selected);
-    setCurrentPage(selected + 1); // Ajuste porque react-paginate usa índices base 0
+    setCurrentPage(selected + 1); // Adjusting because is zero-indexed
   };
 
+
+  // Reset the local page state to 0 when the total number of items changes.
   useEffect(() => {
     setCurrentPageState(0);
   }, [totalItems]);

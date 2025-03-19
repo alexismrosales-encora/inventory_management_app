@@ -7,6 +7,19 @@ import Modal from "../modal/Modal";
 import ProductForm from "../productForm/ProductForm";
 import inventoryService from '../../services/inventory.service';
 
+/**
+ * ProductTable Component
+ *
+ * Renders a table displaying products and integrates modals for product creation/editing,
+ * deletion confirmation, and marking items out of stock. It uses InventoryContext to obtain
+ * the necessary state and functions to manage modal visibility and trigger updates.
+ *
+ * @component
+ * @example
+ * return (
+ *   <ProductTable />
+ * )
+ */
 const ProductTable = () => {
   const context = useContext(InventoryContext)
   if (!context) {
@@ -23,17 +36,31 @@ const ProductTable = () => {
 
 
 
+  /**
+   * Handles the deletion of a product.
+   *
+   * Calls the inventory service to delete the item by id, triggers a table update, and
+   * opens the delete confirmation modal.
+   *
+   * @param {number} id - The ID of the product to be deleted.
+   */
   const handleDeleteButton = (id: number) => {
     inventoryService.deleteInventoryItem(id) // Delete item
     setShouldUpdateTable(prev => !prev) // Trigger update
     setDeleteConfirmation(true)
   }
 
+  /**
+   * Handles marking all products on the page as out of stock.
+   *
+   * Iterates over the inventory items and updates each one to be out of stock, then triggers
+   * a table update.
+   */
   const handleMarkItems = () => {
     inventoryItems.map((item) => {
       inventoryService.updateInventoryItemOutOfStock(item.id)
     })
-    setShouldUpdateTable(prev => !prev)
+    setShouldUpdateTable(prev => !prev) // Trigger update of the product table
   }
 
   return <> <div className="relative overflow-x-auto xl:overflow-visible">

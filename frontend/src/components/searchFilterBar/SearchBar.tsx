@@ -6,6 +6,21 @@ import inventoryService from '../../services/inventory.service';
 import TablePageResizer from '../searchFilterBar/TablePageResizer.tsx'
 import ProductForm from '../productForm/ProductForm.tsx';
 import Modal from '../modal/Modal.tsx';
+
+/**
+ * SearchBar component
+ *
+ * This component provides a search and filter interface for the inventory.
+ * It allows users to search by product name, filter by stock availability,
+ * and select product categories. It also provides a button to open a modal
+ * for creating a new product.
+ *
+ * @component
+ * @example
+ * return (
+ *   <SearchBar />
+ * )
+ */
 const SearchBar = () => {
   const [categoriesState, setCategoriesState] = useState<string[]>([])
 
@@ -20,10 +35,23 @@ const SearchBar = () => {
 
   const { filters, setFilters } = context.filterContext;
 
+  /**
+   * Handle changes in the search input field.
+   *
+   * @param {React.ChangeEvent<HTMLInputElement>} e - The change event from the search input.
+   */
   const handleSearchTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFilters({ ...filters, search: e.target.value })
   }
 
+
+  /**
+   * Handle changes in the category checkbox.
+   *
+   * Toggles the selected category in the filters.categories array.
+   *
+   * @param {string} selectedCategory - The category that was toggled.
+   */
   const handleCategoryChange = (selectedCategory: string) => {
     setFilters((prevFilters) => {
       const updatedCategories = prevFilters.categories.includes(selectedCategory)
@@ -34,6 +62,12 @@ const SearchBar = () => {
     });
   }
 
+
+  /**
+     * Handle changes in the stock status select element.
+     *
+     * @param {React.ChangeEvent<HTMLSelectElement>} e - The change event from the select element.
+  */
   const handleStockStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setFilters({ ...filters, stockStatus: e.target.value as any })
   }

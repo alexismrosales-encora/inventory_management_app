@@ -5,8 +5,19 @@ import { InventoryContext } from "../../context/InventoryContext";
 import { NavUpArrowIcon, NavDownArrowIcon, EditProductIcon, DeleteProductIcon } from "../../utils/icons"
 import { StockStatus } from "../../utils/inventory.utils";
 
-
-
+/**
+* ProductRows Component
+*
+* Renders table rows for each product item in the inventory.
+* It fetches products using pagination, filtering, and sorting information from the InventoryContext.
+* It also handles item editing, deletion, and toggling stock status.
+*
+* @component
+* @example
+* <tbody>
+*   <ProductRows />
+* </tbody>
+*/
 export const ProductRows = () => {
 
   const context = useContext(InventoryContext)
@@ -24,7 +35,11 @@ export const ProductRows = () => {
   const { sortBy, sortOrder } = context.sortingContext
 
   const [checkedItems, setCheckedItems] = useState<{ [key: number]: boolean }>({});
-
+  /**
+   * Fetch inventory items when filters, pagination, sorting, or update trigger changes.
+   * Updates local inventory items state and total item count.
+   * Also initializes the checked state based on each item's stock status.
+   */
   useEffect(() => {
     const pagination: Pagination = {
       page: currentPage,
@@ -47,21 +62,39 @@ export const ProductRows = () => {
     )
   }, [filters, currentPage, pageSize, shouldUpdateTable, sortBy, sortOrder])
 
+  /**
+   * Update the total items in the global context whenever local inventory items or totalItemsState changes.
+   */
   useEffect(() => {
     setTotalItems(totalItemsState)
   }, [inventoryItems, totalItemsState, totalItems])
 
+
+  /**
+   * Handles the click on the edit button for a given inventory item.
+   *
+   * @param {InventoryItem} item - The inventory item to edit.
+   */
   const handleEditButton = (item: InventoryItem) => {
     setItem(item) // Pass form to the context
     setShouldOpenForm(true) // Trigger Form
   }
 
+  /**
+   * Handles the click on the delete button for a given inventory item.
+   *
+   * @param {InventoryItem} item - The inventory item to delete.
+   */
   const handleDeleteButton = (item: InventoryItem) => {
     setItem(item)
     setDeleteConfirmation(true)
   }
 
-
+  /**
+   * Toggles the stock status of an item and updates the inventory.
+   *
+   * @param {number} id - The ID of the inventory item to update.
+   */
   const handleUpdateStateButton = async (id: number) => {
     const isChecked = !checkedItems[id];;
 
@@ -124,6 +157,18 @@ export const ProductRows = () => {
   </>
 }
 
+/**
+ * ProductRowHeader Component
+ *
+ * Renders the header row for the products table. It includes a checkbox
+ * to mark all items as out of stock and sorting buttons for each column.
+ *
+ * @component
+ * @example
+ * <thead>
+ *   <ProductRowHeader />
+ * </thead>
+ */
 export const ProductRowHeader = () => {
   const context = useContext(InventoryContext)
   if (!context) {
@@ -181,6 +226,22 @@ export const ProductRowHeader = () => {
   </tr>
 }
 
+/**
+ * UpDownButtons Component
+ *
+ * Renders sorting control buttons (up and down arrows) for a specific column.
+ * Clicking the button toggles the sorting order (desc, asc, or removed) for the column.
+ *
+ * @param {Object} props - Component properties.
+ * @param {string} props.sortBy - The field name used for sorting.
+ * @returns {JSX.Element | null} The rendered sorting buttons.
+ *
+ * @example
+ * <UpDownButtons sortBy="price" />
+ */
+interface UpDownButtonsProps {
+  sortBy: string;
+}
 interface UpDownButtonsProps {
   sortBy: string;
 }
@@ -194,6 +255,13 @@ const UpDownButtons = ({ sortBy }: UpDownButtonsProps) => {
   const { sortOrder, setSortOrder, sortBy: currentSortBy, setSortBy } = context.sortingContext;
   const { setShouldUpdateTable } = context.triggerTableUpdateType;
 
+  /**
+   * Handles the sorting arrow button click.
+   *
+   * Toggles the sort order for the given column. If the column is already being sorted,
+   * it toggles between descending and ascending order, and eventually removes the column
+   * from the sort criteria.
+   */
   const handleNavArrowButton = () => {
     let newSortBy = [...currentSortBy]
     let newSortOrder = [...sortOrder]
@@ -228,6 +296,12 @@ const UpDownButtons = ({ sortBy }: UpDownButtonsProps) => {
   </button>
 }
 
+/**
+ * Returns the background color class for a product row based on its expiry date.
+ *
+ * @param {Date | null} itemExpiryDate - The expiry date of the product.
+ * @returns {string} A string representing a CSS class for background color.
+ */
 const backgroundColorRows = (itemExpiryDate: Date | null): string => {
   // If the items is null it means it has no expiryDate
   if (!itemExpiryDate) return "";
@@ -247,6 +321,12 @@ const backgroundColorRows = (itemExpiryDate: Date | null): string => {
   }
 }
 
+/**
+ * Returns the background color class for a product row based on its stock level.
+ *
+ * @param {number} stock - The stock quantity of the product.
+ * @returns {string} A string representing a CSS class for background color.
+ */
 const backgroundStockColorRows = (stock: number): string => {
   if (stock < 5) {
     return "bg-red-400"
