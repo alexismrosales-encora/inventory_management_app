@@ -128,6 +128,4 @@ public class InventoryService implements IInventoryService {
 
         return new MetricsDTO(totalValueInStock, averagePriceInStockGlobal, categoryMetrics);
     }
-
-
 }

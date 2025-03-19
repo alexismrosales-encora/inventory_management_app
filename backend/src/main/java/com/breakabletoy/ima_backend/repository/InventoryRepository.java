@@ -18,4 +18,5 @@ public interface InventoryRepository {
     List<Inventory> findAllWithoutPagination();
     List<String> findAllCategories();
     long totalItems();
+    public void clear();
 }

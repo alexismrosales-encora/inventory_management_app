@@ -18,10 +18,10 @@ public class PaginationRequestDTO {
     public PaginationRequestDTO(int page, int size, List<String> sortBy, List<String> sortOrder, StockStatus stockStatus, List<String> categories, String search) {
         this.page = page;
         this.size = size;
-        this.sortBy = sortBy;
-        this.sortOrder = sortOrder;
+        this.sortBy = (sortBy != null) ? sortBy : List.of();
+        this.sortOrder = (sortOrder != null) ? sortOrder : List.of();
         this.stockStatus = stockStatus;
-        this.categories = categories;
+        this.categories =(categories != null) ? categories : List.of();
         this.search = search;
     }
 

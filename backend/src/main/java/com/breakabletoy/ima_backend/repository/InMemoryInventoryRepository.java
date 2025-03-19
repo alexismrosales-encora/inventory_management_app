@@ -65,7 +65,7 @@ public class InMemoryInventoryRepository implements InventoryRepository {
         // Pagination slicing
         int page = paginationRequestDTO.getPage();
         int size = paginationRequestDTO.getSize();
-        int fromIndex = (page - 1) * size; // Adjusting page index
+        int fromIndex = Math.max(0, (page - 1) * size); // Adjusting page index
         int toIndex = Math.min(fromIndex + size, sortedInventory.size());
 
         // In case is the last page available
@@ -89,6 +89,10 @@ public class InMemoryInventoryRepository implements InventoryRepository {
         return currentSizeOfListOfElements;
     }
 
+    public void clear() {
+        inventoryMap.clear();
+        counter.set(1); // Restart counter
+    }
 
     // TODO: Fix the search of the word in the case the search keyword exist with the prefix or something
     // problem example: product1 = iPhone product2 = Computer, if keyword = i, there will be coincidence for product1 and product2
