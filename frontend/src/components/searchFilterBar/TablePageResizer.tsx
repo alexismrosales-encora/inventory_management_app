@@ -1,6 +1,6 @@
 import { useContext } from 'react'
-import { pageSizes } from '../utils/inventory.utils'
-import { InventoryContext } from '../context/InventoryContext'
+import { pageSizes } from '../../utils/inventory.utils'
+import { InventoryContext } from '../../context/InventoryContext'
 
 interface TablePageResizerType {
   className?: string

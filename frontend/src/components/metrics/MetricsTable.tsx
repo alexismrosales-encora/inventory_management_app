@@ -1,8 +1,8 @@
 import { useContext, useState, useEffect } from "react"
-import { MetricsType } from "../types/inventory"
-import inventoryService from "../services/inventory.service"
-import { InventoryContext } from "../context/InventoryContext"
-import { DollarIcon } from "./Icons"
+import { MetricsType } from "../../types/inventory"
+import inventoryService from "../../services/inventory.service"
+import { InventoryContext } from "../../context/InventoryContext"
+import { DollarIcon } from "../../utils/icons"
 
 const MetricsTable = () => {
   const [metrics, setMetrics] = useState<MetricsType>({

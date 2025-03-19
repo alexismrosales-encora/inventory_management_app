@@ -1,11 +1,11 @@
 import { useContext } from 'react'
 import { ProductRowHeader, ProductRows } from './ProductRow'
-import { InventoryContext } from '../context/InventoryContext'
+import { InventoryContext } from '../../context/InventoryContext'
 
-import Modal from "./Modal";
+import Modal from "../modal/Modal";
 
-import ProductForm from "./ProductForm";
-import inventoryService from '../services/inventory.service';
+import ProductForm from "../productForm/ProductForm";
+import inventoryService from '../../services/inventory.service';
 
 const ProductTable = () => {
   const context = useContext(InventoryContext)

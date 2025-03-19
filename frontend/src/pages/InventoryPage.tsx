@@ -1,7 +1,7 @@
-import SearchBar from '../components/SearchBar'
-import InventoryTable from '../components/ProductTable'
-import PaginationBar from '../components/PaginationBar'
-import MetricsTable from '../components/MetricsTable'
+import SearchBar from '../components/searchFilterBar/SearchBar'
+import InventoryTable from '../components/inventoryTable/ProductTable'
+import PaginationBar from '../components/inventoryTable/PaginationBar'
+import MetricsTable from '../components/metrics/MetricsTable'
 
 import { InventoryProvider } from '../context/InventoryContext'
 

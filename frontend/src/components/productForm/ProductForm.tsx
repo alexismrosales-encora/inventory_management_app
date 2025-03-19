@@ -1,9 +1,9 @@
 import { useContext, useEffect, useState } from "react"
-import inventoryService from "../services/inventory.service"
-import { InventoryItem, Product } from "../types/inventory";
-import { StockStatus } from "../utils/inventory.utils";
-import { InventoryContext } from "../context/InventoryContext";
-import { PlusIcon } from "./Icons";
+import inventoryService from "../../services/inventory.service"
+import { InventoryItem, Product } from "../../types/inventory";
+import { StockStatus } from "../../utils/inventory.utils";
+import { InventoryContext } from "../../context/InventoryContext";
+import { PlusIcon } from "../../utils/icons";
 
 interface ProductFormProps {
   productToEdit?: InventoryItem | null; // Optional prop for editing

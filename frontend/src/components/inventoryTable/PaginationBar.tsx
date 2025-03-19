@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react"
-import { InventoryContext } from "../context/InventoryContext"
+import { InventoryContext } from "../../context/InventoryContext"
 import ReactPaginate from "react-paginate";
 
 

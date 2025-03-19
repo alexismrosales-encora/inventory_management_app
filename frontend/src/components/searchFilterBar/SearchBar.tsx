@@ -1,11 +1,11 @@
-import { StockStatusList } from '../utils/inventory.utils'
-import { InventoryContext } from '../context/InventoryContext'
+import { StockStatusList } from '../../utils/inventory.utils'
+import { InventoryContext } from '../../context/InventoryContext'
 import React, { useContext, useEffect, useState } from 'react';
-import { BoardCheck, CategoryIcon, NavDownArrowIcon, SearchIcon, NewProductIcon } from './Icons.tsx'
-import inventoryService from '../services/inventory.service';
-import TablePageResizer from '../components/TablePageResizer'
-import ProductForm from './ProductForm.tsx';
-import Modal from './Modal.tsx';
+import { BoardCheck, CategoryIcon, NavDownArrowIcon, SearchIcon, NewProductIcon } from '../../utils/icons.tsx'
+import inventoryService from '../../services/inventory.service';
+import TablePageResizer from '../searchFilterBar/TablePageResizer.tsx'
+import ProductForm from '../productForm/ProductForm.tsx';
+import Modal from '../modal/Modal.tsx';
 const SearchBar = () => {
   const [categoriesState, setCategoriesState] = useState<string[]>([])
 

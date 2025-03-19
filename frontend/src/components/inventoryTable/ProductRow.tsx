@@ -1,9 +1,9 @@
 import { useContext, useEffect, useState } from "react"
-import inventoryService from "../services/inventory.service"
-import { InventoryItem, Pagination } from "../types/inventory"
-import { InventoryContext } from "../context/InventoryContext";
-import { NavUpArrowIcon, NavDownArrowIcon, EditProductIcon, DeleteProductIcon } from "./Icons"
-import { StockStatus } from "../utils/inventory.utils";
+import inventoryService from "../../services/inventory.service"
+import { InventoryItem, Pagination } from "../../types/inventory"
+import { InventoryContext } from "../../context/InventoryContext";
+import { NavUpArrowIcon, NavDownArrowIcon, EditProductIcon, DeleteProductIcon } from "../../utils/icons"
+import { StockStatus } from "../../utils/inventory.utils";
 
 
 
