@@ -3,6 +3,21 @@ package com.breakabletoy.ima_backend.dto;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+/*
+ * ProductDTO represents a data transfer object for product details.
+ *
+ * Fields:
+ * - id: Unique identifier for the product.
+ * - name: Name of the product.
+ * - category: The category the product belongs to.
+ * - price: Price of the product.
+ * - expiryDate: Expiry date of the product (if applicable).
+ * - dateCreated: Date when the product was created.
+ * - dateUpdated: Date when the product was last updated.
+ *
+ * Constructor:
+ * Initializes a new instance of ProductDTO with the provided values.
+ */
 public class ProductDTO {
     private Long id;
     private String name;
@@ -21,7 +36,7 @@ public class ProductDTO {
         this.dateCreated = dateCreated;
         this.dateUpdated = dateUpdated;
     }
-
+    // Getters and setters are provided below.
     public Long getId() {
         return id;
     }

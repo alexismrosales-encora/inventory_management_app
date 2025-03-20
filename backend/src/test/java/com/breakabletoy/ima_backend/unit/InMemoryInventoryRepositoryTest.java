@@ -12,10 +12,26 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+/*
+ * InMemoryInventoryRepositoryTest sets up test data for the InMemoryInventoryRepository.
+ * It creates sample products and inventory items before each test.
+ */
 class InMemoryInventoryRepositoryTest {
 
     private InMemoryInventoryRepository inventoryRepository;
 
+
+    /*
+     * Sets up the repository with sample data before each test.
+     * Three products are created:
+     * - A Laptop (Electronics, price 1000.00, with expiry date)
+     * - A Phone (Electronics, price 500.00, with expiry date)
+     * - A Shirt (Clothing, price 20.00, no expiry date)
+     * Corresponding inventory items are then created and saved:
+     * - Inventory item 1: 10 units of Laptop, IN_STOCK.
+     * - Inventory item 2: 5 units of Phone, OUT_OF_STOCK.
+     * - Inventory item 3: 15 units of Shirt, IN_STOCK.
+     */
     @BeforeEach
     void setUp() {
         inventoryRepository = new InMemoryInventoryRepository();

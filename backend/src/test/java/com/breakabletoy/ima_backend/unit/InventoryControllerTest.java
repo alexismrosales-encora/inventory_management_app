@@ -23,19 +23,30 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(InventoryController.class) // Carga solo el controlador sin el contexto completo de Spring Boot
+@WebMvcTest(InventoryController.class)
 class InventoryControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
-    private InventoryService inventoryService; // Ahora Spring manejará la inyección correctamente
+    private InventoryService inventoryService;
 
     @Autowired
     private ObjectMapper objectMapper;
 
     private InventoryDTO inventoryDTO;
 
+    /*
+     * Sets up the repository with sample data before each test.
+     * Three products are created:
+     * - A Laptop (Electronics, price 1000.00, with expiry date)
+     * - A Phone (Electronics, price 500.00, with expiry date)
+     * - A Shirt (Clothing, price 20.00, no expiry date)
+     * Corresponding inventory items are then created and saved:
+     * - Inventory item 1: 10 units of Laptop, IN_STOCK.
+     * - Inventory item 2: 5 units of Phone, OUT_OF_STOCK.
+     * - Inventory item 3: 15 units of Shirt, IN_STOCK.
+     */
     @BeforeEach
     void setUp() {
         inventoryDTO = new InventoryDTO(1L, null, 10, StockStatus.IN_STOCK);
@@ -132,4 +143,3 @@ class InventoryControllerTest {
                 .andExpect(jsonPath("$.averagePriceInStock").value(1));
     }
 }
-

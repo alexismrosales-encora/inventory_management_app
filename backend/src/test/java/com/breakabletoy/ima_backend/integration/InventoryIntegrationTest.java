@@ -26,6 +26,7 @@ import static org.hamcrest.Matchers.*;
 @AutoConfigureMockMvc
 class InventoryIntegrationTest {
 
+    // Used to perform HTTP requests in tests.
     @Autowired
     private MockMvc mockMvc;
 
@@ -39,6 +40,7 @@ class InventoryIntegrationTest {
     private InventoryRepository inventoryRepository;
 
 
+    // Set up a sample InventoryDTO before each test.
     @BeforeEach
     void setUp() {
         ProductDTO productDTO = new ProductDTO(1L, "Laptop", "Electronics", new BigDecimal("1000.00"),
@@ -46,22 +48,22 @@ class InventoryIntegrationTest {
         inventoryDTO = new InventoryDTO(1L, productDTO, 10, StockStatus.IN_STOCK);
     }
 
+    // Clean the in-memory repository before each test to ensure a fresh state.
     @BeforeEach
     void cleanDatabase() {
         if (inventoryRepository instanceof InMemoryInventoryRepository) {
-            ((InMemoryInventoryRepository) inventoryRepository).clear(); // ✅ Borra los datos antes de cada test
+            ((InMemoryInventoryRepository) inventoryRepository).clear();
         }
     }
 
     @Test
     void testCreateAndGetInventory() throws Exception {
-        // Crear un producto
         mockMvc.perform(post("/api/products")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(inventoryDTO)))
                 .andExpect(status().isCreated());
 
-        // Obtener la lista de productos y verificar que haya 1
+        // Perform a GET request to retrieve inventory data and verify one product exists.
         mockMvc.perform(get("/api/products"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.items", hasSize(1)))
@@ -70,18 +72,18 @@ class InventoryIntegrationTest {
 
     @Test
     void testUpdateInventory() throws Exception {
-        // 1️⃣ Crear un producto y obtener el ID generado
+        // Create a product and get the ID
         String response = mockMvc.perform(post("/api/products")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(inventoryDTO)))
                 .andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsString();
 
-        // Extraer el ID del producto creado
+        // Extract the product
         InventoryDTO createdInventory = objectMapper.readValue(response, InventoryDTO.class);
         Long inventoryId = createdInventory.getId();
 
-        // 2️⃣ Asegurar que `inventoryDTO` tenga el ID correcto
+        // Check if it has the correct ID
         inventoryDTO.setId(inventoryId);
         inventoryDTO.setQuantity(20);
         mockMvc.perform(put("/api/products/1")
@@ -98,12 +100,11 @@ class InventoryIntegrationTest {
                         .content(objectMapper.writeValueAsString(inventoryDTO)))
                 .andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsString();
-
-        // Extraer el ID del producto creado
+        // Extract the product
         InventoryDTO createdInventory = objectMapper.readValue(response, InventoryDTO.class);
         Long inventoryId = createdInventory.getId();
 
-        // 2️⃣ Eliminar el producto con el ID real
+        // Delete the product
         mockMvc.perform(delete("/api/products/" + inventoryId))
                 .andExpect(status().isNoContent());
         mockMvc.perform(get("/api/products"))

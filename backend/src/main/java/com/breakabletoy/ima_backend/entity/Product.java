@@ -2,6 +2,23 @@ package com.breakabletoy.ima_backend.entity;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+
+/*
+ * Product entity represents a product in the inventory system.
+ *
+ * Fields:
+ * - id: Unique identifier for the product.
+ * - name: Name of the product.
+ * - category: The category to which the product belongs.
+ * - price: The price of the product.
+ * - expiryDate: The date the product expires (if applicable).
+ * - dateCreate: The date the product was created.
+ * - dateUpdate: The date the product was last updated.
+ *
+ * Constructors:
+ * - Default constructor.
+ * - Parameterized constructor to initialize all fields.
+ */
 public class Product {
     private Long id;
     private String name;
@@ -11,8 +28,10 @@ public class Product {
     private LocalDate dateCreate;
     private LocalDate dateUpdate;
 
+    // Default constructor
     public Product() {}
 
+    // Parameterized constructor
     public Product(Long id, String name, String category, BigDecimal price, LocalDate expiryDate, LocalDate dateCreate, LocalDate dateUpdate) {
         this.id = id;
         this.name = name;
@@ -23,6 +42,7 @@ public class Product {
         this.dateUpdate = dateUpdate;
     }
 
+    // Getters and setters are provided below.
     public Long getId() {
         return id;
     }

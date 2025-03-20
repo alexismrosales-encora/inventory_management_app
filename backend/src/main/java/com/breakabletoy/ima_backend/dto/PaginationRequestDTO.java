@@ -4,6 +4,24 @@ import com.breakabletoy.ima_backend.enums.StockStatus;
 
 import java.util.List;
 
+
+/*
+ * PaginationRequestDTO represents a request for paginated, sorted, and filtered data.
+ *
+ * Fields:
+ * - page: The current page number.
+ * - size: The number of items per page.
+ * - sortBy: A list of field names to sort by.
+ * - sortOrder: A list of sort orders corresponding to the sortBy fields.
+ * - stockStatus: The stock status filter (e.g., IN_STOCK, OUT_OF_STOCK).
+ * - categories: A list of product categories to filter by.
+ * - search: A search term to filter product names.
+ *
+ * Constructors:
+ * - Default constructor.
+ * - Parameterized constructor that initializes all fields. If sortBy, sortOrder, or categories
+ *   are passed as null, they are replaced with an empty list.
+ */
 public class PaginationRequestDTO {
     private int page;
     private int size;
@@ -25,6 +43,7 @@ public class PaginationRequestDTO {
         this.search = search;
     }
 
+    // Getters and setters are provided below.
     public int getPage() {
         return page;
     }
