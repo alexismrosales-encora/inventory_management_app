@@ -43,7 +43,7 @@ const ProductForm = ({ productToEdit, onClose }: ProductFormProps) => {
   tomorrow.setDate(tomorrow.getDate() + 1)
   const minDate = tomorrow.toISOString().split('T')[0]
 
-  const validCharacters = /^[A-Za-z0-9]*$/
+  const validCharacters = /^[A-Za-z0-9 ]*$/
 
   const context = useContext(InventoryContext)
   if (!context) {
