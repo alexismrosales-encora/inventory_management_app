@@ -1,11 +1,10 @@
 import { StockStatusList } from '../../utils/inventory.utils'
-import { InventoryContext } from '../../context/InventoryContext'
-import React, { useContext, useEffect, useState } from 'react';
+import { useState } from 'react';
 import { BoardCheck, CategoryIcon, NavDownArrowIcon, SearchIcon, NewProductIcon } from '../../utils/icons.tsx'
-import inventoryService from '../../services/inventory.service';
 import TablePageResizer from '../searchFilterBar/TablePageResizer.tsx'
 import ProductForm from '../productForm/ProductForm.tsx';
 import Modal from '../modal/Modal.tsx';
+import { useInventoryFilters } from '../../hooks/useInventoryFilters.ts';
 
 /**
  * SearchBar component
@@ -22,61 +21,19 @@ import Modal from '../modal/Modal.tsx';
  * )
  */
 const SearchBar = () => {
-  const [categoriesState, setCategoriesState] = useState<string[]>([])
 
   const [openNewProductForm, setOpenNewProductForm] = useState(false)
 
   const statusList = StockStatusList()
-  // using context
-  const context = useContext(InventoryContext)
-  if (!context) {
-    return null
-  }
-
-  const { filters, setFilters } = context.filterContext;
-
-  /**
-   * Handle changes in the search input field.
-   *
-   * @param {React.ChangeEvent<HTMLInputElement>} e - The change event from the search input.
-   */
-  const handleSearchTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFilters({ ...filters, search: e.target.value })
-  }
-
-
-  /**
-   * Handle changes in the category checkbox.
-   *
-   * Toggles the selected category in the filters.categories array.
-   *
-   * @param {string} selectedCategory - The category that was toggled.
-   */
-  const handleCategoryChange = (selectedCategory: string) => {
-    setFilters((prevFilters) => {
-      const updatedCategories = prevFilters.categories.includes(selectedCategory)
-        ? prevFilters.categories.filter((cat) => cat !== selectedCategory)
-        : [...prevFilters.categories, selectedCategory];
-
-      return { ...prevFilters, categories: updatedCategories };
-    });
-  }
-
-
-  /**
-     * Handle changes in the stock status select element.
-     *
-     * @param {React.ChangeEvent<HTMLSelectElement>} e - The change event from the select element.
-  */
-  const handleStockStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setFilters({ ...filters, stockStatus: e.target.value as any })
-  }
-
-  useEffect(() => {
-    inventoryService.getCategories().then((response) => {
-      setCategoriesState(response)
-    })
-  }, [categoriesState])
+  const {
+    filters,
+    categories,
+    error,
+    isLoading,
+    handleSearchTextChange,
+    handleCategoryChange,
+    handleStockStatusChange
+  } = useInventoryFilters()
 
   return <div className="w-full py-4">
     <form className="w-full flex-col">
@@ -136,7 +93,7 @@ const SearchBar = () => {
             <CategoryIcon />
           </span>
           <div className="flex flex-wrap w-full gap-2  gap-x-2 gap-y-2">
-            {categoriesState.map((category) => (
+            {categories.map((category) => (
               <label key={category} className="flex items-center space-x-2">
                 <input
                   type="checkbox"

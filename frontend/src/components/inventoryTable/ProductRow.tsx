@@ -1,9 +1,7 @@
-import { useContext, useEffect, useState } from "react"
-import inventoryService from "../../services/inventory.service"
-import { InventoryItem, Pagination } from "../../types/inventory"
+import { useContext } from "react"
 import { InventoryContext } from "../../context/InventoryContext";
 import { NavUpArrowIcon, NavDownArrowIcon, EditProductIcon, DeleteProductIcon } from "../../utils/icons"
-import { StockStatus } from "../../utils/inventory.utils";
+import { useInventoryItems } from "../../hooks/useInventoryItems";
 
 /**
 * ProductRows Component
@@ -20,103 +18,13 @@ import { StockStatus } from "../../utils/inventory.utils";
 */
 export const ProductRows = () => {
 
-  const context = useContext(InventoryContext)
-  const [totalItemsState, setTotalItemsState] = useState<number>(0);
-  if (!context) {
-    return null
-  }
-
-  const { filters } = context.filterContext
-  const { currentPage, totalItems, setTotalItems } = context.paginationContext.paginationFilterType
-  const { pageSize } = context.paginationContext.paginationSizeType
-  const { shouldUpdateTable, setShouldUpdateTable } = context.triggerTableUpdateType
-  const { setShouldOpenForm, setItem, setDeleteConfirmation } = context.toggleForCreateAndEditProduct
-  const { inventoryItems, setInventoryItems } = context.inventoryItems
-  const { sortBy, sortOrder } = context.sortingContext
-
-  const [checkedItems, setCheckedItems] = useState<{ [key: number]: boolean }>({});
-  /**
-   * Fetch inventory items when filters, pagination, sorting, or update trigger changes.
-   * Updates local inventory items state and total item count.
-   * Also initializes the checked state based on each item's stock status.
-   */
-  useEffect(() => {
-    const pagination: Pagination = {
-      page: currentPage,
-      size: pageSize,
-      sortBy,
-      sortOrder
-    }
-    inventoryService.getAllItems(pagination, filters).then(
-      (response) => {
-        setInventoryItems(response.items)
-        setTotalItemsState(response.totalItems)
-
-        // Mark items without stock
-        const initialCheckedState = response.items.reduce((acc, item) => {
-          acc[item.id] = item.stockStatus === StockStatus.OUT_OF_STOCK;
-          return acc;
-        }, {} as { [key: number]: boolean });
-        setCheckedItems(initialCheckedState);
-      }
-    )
-  }, [filters, currentPage, pageSize, shouldUpdateTable, sortBy, sortOrder])
-
-  /**
-   * Update the total items in the global context whenever local inventory items or totalItemsState changes.
-   */
-  useEffect(() => {
-    setTotalItems(totalItemsState)
-  }, [inventoryItems, totalItemsState, totalItems])
-
-
-  /**
-   * Handles the click on the edit button for a given inventory item.
-   *
-   * @param {InventoryItem} item - The inventory item to edit.
-   */
-  const handleEditButton = (item: InventoryItem) => {
-    setItem(item) // Pass form to the context
-    setShouldOpenForm(true) // Trigger Form
-  }
-
-  /**
-   * Handles the click on the delete button for a given inventory item.
-   *
-   * @param {InventoryItem} item - The inventory item to delete.
-   */
-  const handleDeleteButton = (item: InventoryItem) => {
-    setItem(item)
-    setDeleteConfirmation(true)
-  }
-
-  /**
-   * Toggles the stock status of an item and updates the inventory.
-   *
-   * @param {number} id - The ID of the inventory item to update.
-   */
-  const handleUpdateStateButton = async (id: number) => {
-    const isChecked = !checkedItems[id];;
-
-    setCheckedItems((prev) => ({
-      ...prev,
-      [id]: isChecked
-    }));
-
-    try {
-      if (isChecked) {
-        await inventoryService.updateInventoryItemOutOfStock(id);
-      } else {
-        await inventoryService.updateInventoryItemInStock(id);
-      }
-
-      // trigger table update
-      setShouldUpdateTable(prev => !prev);
-    } catch (error) {
-      console.error("Error updating inventory:", error);
-    }
-  }
-
+  const {
+    inventoryItems,
+    checkedItems,
+    handleUpdateStateButton,
+    handleEditButton,
+    handleDeleteButton
+  } = useInventoryItems()
   return <>
     {inventoryItems.map((item) => (
       <tr

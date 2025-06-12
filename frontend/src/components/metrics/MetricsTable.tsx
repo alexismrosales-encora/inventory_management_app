@@ -3,6 +3,7 @@ import { MetricsType } from "../../types/inventory"
 import inventoryService from "../../services/inventory.service"
 import { InventoryContext } from "../../context/InventoryContext"
 import { DollarIcon } from "../../utils/icons"
+import { useMetricsData } from "../../hooks/useMetricsData"
 
 
 /**
@@ -21,28 +22,13 @@ import { DollarIcon } from "../../utils/icons"
 * )
 */
 const MetricsTable = () => {
-  // Local state to hold metrics data
-  const [metrics, setMetrics] = useState<MetricsType>({
-    averagePriceInStock: 0,
-    totalValueInStock: 0,
-    categoryMetrics: []
-  })
+  const { metrics, error, isLoading } = useMetricsData()
 
-  const context = useContext(InventoryContext)
-  if (!context) {
-    return null
+  if (!metrics) {
+    return <div>
+      Empty
+    </div>
   }
-  const { shouldUpdateTable } = context.triggerTableUpdateType
-
-  // Fetch metrics from the service when the table update trigger changes
-  useEffect(() => {
-    inventoryService.getMetrics().then(
-      (response) => {
-        setMetrics(response)
-      }
-    )
-  }, [shouldUpdateTable])
-
   return <div className="pt-5 md:px-[15rem] w-full">
     <h3 className="font-medium text-2xl">Overall</h3>
     <div className="flex w-full py-4 justify-center">

@@ -118,3 +118,15 @@ export interface MetricsType {
   averagePriceInStock: number,
   categoryMetrics: CategoryMetricType[]
 }
+
+/**
+ * Props for the ProductForm component.
+ *
+ * @typedef {Object} ProductFormProps
+ * @property {InventoryItem | null} [productToEdit] - Optional product to edit; if null, the form is for creating a new product.
+ * @property {() => void} onClose - Function to call when closing the form.
+ */
+export interface ProductFormProps {
+  productToEdit?: InventoryItem | null; // Optional prop for editing
+  onClose: () => void; // Function to close the form
+}
