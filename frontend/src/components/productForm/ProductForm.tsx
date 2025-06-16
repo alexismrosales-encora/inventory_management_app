@@ -2,7 +2,6 @@ import { ProductFormProps } from "../../types/inventory"
 import { PlusIcon } from "../../utils/icons"
 import { useProductForm } from "../../hooks/useProductForm"
 
-
 /**
  * ProductForm Component
  *

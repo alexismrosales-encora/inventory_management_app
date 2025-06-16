@@ -36,6 +36,7 @@ const ProductTable = () => {
 
 
 
+
   /**
    * Handles the deletion of a product.
    *

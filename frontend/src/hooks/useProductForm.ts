@@ -11,7 +11,7 @@ export const useProductForm = ({ productToEdit, onClose }: ProductFormProps) => 
   }
 
   // Context hooks
-  const { shouldUpdateTable, setShouldUpdateTable } = context.triggerTableUpdateType
+  const { setShouldUpdateTable } = context.triggerTableUpdateType
 
   // Local hooks
   const [selectedName, setSelectedName] = useState(productToEdit?.product.name || "")
@@ -113,7 +113,7 @@ export const useProductForm = ({ productToEdit, onClose }: ProductFormProps) => 
     };
 
     fetchCategories();
-  }, [shouldUpdateTable])
+  }, [])
 
   return {
     selectedName,

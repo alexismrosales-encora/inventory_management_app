@@ -28,7 +28,7 @@ import { InventoryProvider } from '../context/InventoryContext'
 const Inventory = () => {
   return (
     <InventoryProvider>
-      <h1 className="font-semibold text-3xl">INVENTORY</h1>
+      <h1 className="font-semibold text-2xl">INVENTORY</h1>
       <SearchBar />
       <InventoryTable />
       <PaginationBar />

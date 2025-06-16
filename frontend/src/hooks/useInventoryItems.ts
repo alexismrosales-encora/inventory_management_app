@@ -23,7 +23,9 @@ export const useInventoryItems = () => {
   const [totalItemsState, setTotalItemsState] = useState<number>(0);
   const [checkedItems, setCheckedItems] = useState<{ [key: number]: boolean }>({});
 
-
+  // Local hooks
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   /**
    * Update the total items in the global context whenever local inventory items or totalItemsState changes.
@@ -96,27 +98,27 @@ export const useInventoryItems = () => {
   useEffect(() => {
     // Define an async function inside the effect
     const fetchInventoryItems = async () => {
-      // setLoading(true); // Best practice: set loading state
-      // setError(null);   // Best practice: clear previous errors
+      setIsLoading(true)
+      setError(null)
       try {
         const pagination: Pagination = {
           page: currentPage,
           size: pageSize,
           sortBy,
           sortOrder
-        };
+        }
 
-        const response = await inventoryService.getAllItems(pagination, filters);
+        const response = await inventoryService.getAllItems(pagination, filters)
 
-        setInventoryItems(response.items);
-        setTotalItemsState(response.totalItems);
-        setCheckedItems(getInitialCheckedState(response.items));
+        setInventoryItems(response.items)
+        setTotalItemsState(response.totalItems)
+        setCheckedItems(getInitialCheckedState(response.items))
 
       } catch (error) {
-        console.error("Failed to fetch inventory:", error);
-        // setError("Could not load inventory. Please try again."); // Best practice: set error state for the UI
+        console.error("Failed to fetch inventory:", error)
+        setError("Could not load inventory. Please try again.")
       } finally {
-        // setLoading(false); // Best practice: turn off loading state
+        setIsLoading(false)
       }
     };
 
@@ -126,6 +128,8 @@ export const useInventoryItems = () => {
   return {
     inventoryItems,
     checkedItems,
+    error,
+    isLoading,
     handleEditButton,
     handleDeleteButton,
     handleUpdateStateButton

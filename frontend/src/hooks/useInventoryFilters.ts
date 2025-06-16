@@ -13,7 +13,6 @@ export const useInventoryFilters = () => {
 
   // Local hooks
   const [categories, setCategories] = useState<string[]>([])
-
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -55,7 +54,6 @@ export const useInventoryFilters = () => {
   }
 
   useEffect(() => {
-
     // Define an async function to fetch the data
     const fetchCategories = async () => {
       setIsLoading(true)

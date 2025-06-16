@@ -21,10 +21,23 @@ export const ProductRows = () => {
   const {
     inventoryItems,
     checkedItems,
+    error,
+    isLoading,
     handleUpdateStateButton,
     handleEditButton,
     handleDeleteButton
   } = useInventoryItems()
+
+
+  if (isLoading) {
+    return <>
+      Loading ...
+    </>
+  }
+
+  if (error) {
+    return <> Error </>
+  }
   return <>
     {inventoryItems.map((item) => (
       <tr

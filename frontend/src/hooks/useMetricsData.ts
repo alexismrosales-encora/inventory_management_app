@@ -26,7 +26,6 @@ export const useMetricsData = () => {
     const fetchMetrics = async () => {
       setIsLoading(true);
       setError(null);
-
       try {
         const response = await inventoryService.getMetrics();
         setMetrics(response);
