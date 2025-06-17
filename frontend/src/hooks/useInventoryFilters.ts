@@ -1,16 +1,12 @@
-import { useContext, useEffect, useState } from "react"
-import { InventoryContext } from "../context/InventoryContext"
+import { useEffect, useState } from "react"
 import inventoryService from "../services/inventory.service";
+import { useFilters } from "../context/FilterContext";
+import { useTableTrigger } from "../context/TableTriggerContext";
 
 export const useInventoryFilters = () => {
-  const context = useContext(InventoryContext)
-  if (!context) {
-    throw new Error('useInventoryFilters must be used within an InventoryProvider');
-  }
-
   // Hooks from context
-  const { filters, setFilters } = context.filterContext
-
+  const { filters, setFilters } = useFilters()
+  const { shouldUpdateTable } = useTableTrigger()
   // Local hooks
   const [categories, setCategories] = useState<string[]>([])
   const [isLoading, setIsLoading] = useState(false);
@@ -69,7 +65,7 @@ export const useInventoryFilters = () => {
       }
     }
     fetchCategories()
-  }, [])
+  }, [shouldUpdateTable])
 
   return {
     filters,

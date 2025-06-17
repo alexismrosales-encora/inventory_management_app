@@ -1,7 +1,3 @@
-import { useContext, useState, useEffect } from "react"
-import { MetricsType } from "../../types/inventory"
-import inventoryService from "../../services/inventory.service"
-import { InventoryContext } from "../../context/InventoryContext"
 import { DollarIcon } from "../../utils/icons"
 import { useMetricsData } from "../../hooks/useMetricsData"
 
@@ -27,6 +23,16 @@ const MetricsTable = () => {
   if (!metrics) {
     return <div>
       Empty
+    </div>
+  }
+  if (isLoading) {
+    return <div>
+      Loading...
+    </div>
+  }
+  if (error) {
+    return <div>
+      Error
     </div>
   }
   return <div className="pt-5 md:px-[15rem] w-full">

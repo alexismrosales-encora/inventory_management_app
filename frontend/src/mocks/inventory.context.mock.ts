@@ -1,6 +1,6 @@
 import { vi } from "vitest";
+import { InventoryContext } from '../context/InventoryContext';
 
-// Usamos vi.fn() en vez de jest.fn()
 const mockSetState = vi.fn();
 export const mockContextValue = {
   filterContext: {
@@ -50,3 +50,9 @@ export const mockContextValue = {
     setMarkItemsConfirmation: mockSetState,
   },
 };
+
+const TestWrapper = ({ children }: { children: React.ReactNode }) => (
+  <InventoryContext.Provider value= { mockContextValue as any } >
+  { children }
+  </InventoryContext.Provider>
+)

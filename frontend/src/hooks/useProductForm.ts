@@ -1,30 +1,26 @@
-import { useContext, useEffect, useState } from "react"
-import { InventoryContext } from "../context/InventoryContext"
+import { useEffect, useState } from "react"
 import { InventoryItem, Product, ProductFormProps } from "../types/inventory"
 import inventoryService from "../services/inventory.service"
 import { StockStatus } from "../utils/inventory.utils"
+import { useTableTrigger } from "../context/TableTriggerContext"
 
 export const useProductForm = ({ productToEdit, onClose }: ProductFormProps) => {
-  const context = useContext(InventoryContext)
-  if (!context) {
-    throw new Error('useProductForm must be used within an InventoryProvider')
-  }
 
   // Context hooks
-  const { setShouldUpdateTable } = context.triggerTableUpdateType
+  const { triggerUpdate } = useTableTrigger()
 
   // Local hooks
   const [selectedName, setSelectedName] = useState(productToEdit?.product.name || "")
   const [errorName, setErrorName] = useState(false)
-  const [categories, setCategories] = useState<string[]>([]);
+  const [categories, setCategories] = useState<string[]>([])
   const [selectedCategory, setSelectedCategory] = useState(productToEdit?.product.category || "")
   const [selectedStock, setSelectedStock] = useState(productToEdit?.quantity || 10)
   const [selectedUnitPrice, setSelectedUnitPrice] = useState(productToEdit?.product.price || 0)
   const [selectedDate, setSelectedDate] = useState<Date | null>(productToEdit?.product.expiryDate ? new Date(productToEdit.product.expiryDate) : null)
   const [isVisible, setIsVisible] = useState(false)
   const [allProductsAreValid, setAllProductsAreValid] = useState(true)
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const validCharacters = /^[A-Za-z0-9 ]*$/
 
@@ -64,7 +60,7 @@ export const useProductForm = ({ productToEdit, onClose }: ProductFormProps) => 
         inventoryService.createInventoryItem(inventory)
       }
       // Trigger table update and close the form
-      setShouldUpdateTable(prev => !prev)
+      triggerUpdate()
       onClose()
     } else {
       setAllProductsAreValid(false)
@@ -99,20 +95,20 @@ export const useProductForm = ({ productToEdit, onClose }: ProductFormProps) => 
  */
   useEffect(() => {
     const fetchCategories = async () => {
-      setIsLoading(true);
-      setError(null);
+      setIsLoading(true)
+      setError(null)
       try {
-        const response = await inventoryService.getCategories();
-        setCategories(response);
+        const response = await inventoryService.getCategories()
+        setCategories(response)
       } catch (err) {
-        console.error("Failed to fetch categories:", err);
-        setError("Could not load categories.");
+        console.error("Failed to fetch categories:", err)
+        setError("Could not load categories.")
       } finally {
-        setIsLoading(false);
+        setIsLoading(false)
       }
-    };
+    }
 
-    fetchCategories();
+    fetchCategories()
   }, [])
 
   return {

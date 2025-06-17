@@ -1,16 +1,12 @@
-import { useContext, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { MetricsType } from "../types/inventory"
-import { InventoryContext } from "../context/InventoryContext"
 import inventoryService from "../services/inventory.service"
+import { useTableTrigger } from "../context/TableTriggerContext"
 
 export const useMetricsData = () => {
-  const context = useContext(InventoryContext)
-  if (!context) {
-    throw new Error('useMetricsData must be used within an InventoryProvider')
-  }
 
   // Context hooks
-  const { shouldUpdateTable } = context.triggerTableUpdateType
+  const { shouldUpdateTable } = useTableTrigger()
 
   // Local hooks
   const [metrics, setMetrics] = useState<MetricsType | null>({

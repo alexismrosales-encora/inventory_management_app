@@ -1,23 +1,24 @@
-import { useContext, useEffect, useState } from "react"
-import { InventoryContext } from "../context/InventoryContext"
+import { useEffect, useState } from "react"
 import inventoryService from "../services/inventory.service";
 import { InventoryItem, Pagination } from "../types/inventory";
 import { StockStatus } from "../utils/inventory.utils";
+import { useFilters } from "../context/FilterContext";
+import { usePagination } from "../context/PaginationContext";
+import { useTableTrigger } from "../context/TableTriggerContext";
+import { useProductModal } from "../context/ProductModalContext";
+import { useConfirmations } from "../context/ConfirmationContext";
+import { useInventoryData } from "../context/InventoryDataContext";
+import { useSorting } from "../context/SortingContext";
 
 export const useInventoryItems = () => {
-  const context = useContext(InventoryContext)
-  if (!context) {
-    throw new Error('useInventoryItems must be used within an InventoryProvider')
-  }
-
   // Context hooks
-  const { filters } = context.filterContext
-  const { currentPage, totalItems, setTotalItems } = context.paginationContext.paginationFilterType
-  const { pageSize } = context.paginationContext.paginationSizeType
-  const { shouldUpdateTable, setShouldUpdateTable } = context.triggerTableUpdateType
-  const { setShouldOpenForm, setItem, setDeleteConfirmation } = context.toggleForCreateAndEditProduct
-  const { inventoryItems, setInventoryItems } = context.inventoryItems
-  const { sortBy, sortOrder } = context.sortingContext
+  const { filters } = useFilters()
+  const { currentPage, pageSize, totalItems, setTotalItems } = usePagination()
+  const { shouldUpdateTable, triggerUpdate } = useTableTrigger()
+  const { setShouldOpenForm, setItemForAction } = useProductModal()
+  const { setDeleteConfirmation } = useConfirmations()
+  const { inventoryItems, setInventoryItems } = useInventoryData()
+  const { sortBy, sortOrder } = useSorting()
 
   // Local hooks
   const [totalItemsState, setTotalItemsState] = useState<number>(0);
@@ -40,7 +41,7 @@ export const useInventoryItems = () => {
     * @param {InventoryItem} item - The inventory item to edit.
     */
   const handleEditButton = (item: InventoryItem) => {
-    setItem(item) // Pass form to the context
+    setItemForAction(item) // Pass form to the context
     setShouldOpenForm(true) // Trigger Form
   }
 
@@ -50,7 +51,7 @@ export const useInventoryItems = () => {
    * @param {InventoryItem} item - The inventory item to delete.
    */
   const handleDeleteButton = (item: InventoryItem) => {
-    setItem(item)
+    setItemForAction(item)
     setDeleteConfirmation(true)
   }
 
@@ -75,7 +76,7 @@ export const useInventoryItems = () => {
       }
 
       // trigger table update
-      setShouldUpdateTable(prev => !prev);
+      triggerUpdate()
     } catch (error) {
       console.error("Error updating inventory:", error);
     }

@@ -28,8 +28,6 @@ const SearchBar = () => {
   const {
     filters,
     categories,
-    error,
-    isLoading,
     handleSearchTextChange,
     handleCategoryChange,
     handleStockStatusChange

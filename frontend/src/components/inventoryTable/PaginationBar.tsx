@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react"
-import { InventoryContext } from "../../context/InventoryContext"
 import ReactPaginate from "react-paginate";
+import { usePagination } from "../../context/PaginationContext";
 
 
 /**
@@ -18,13 +18,8 @@ import ReactPaginate from "react-paginate";
  */
 export const PaginationBar = () => {
   const [currentPageState, setCurrentPageState] = useState<number>(0);
-  const context = useContext(InventoryContext);
 
-  if (!context) return null;
-
-  const { totalItems, setCurrentPage } = context.paginationContext.paginationFilterType;
-  const { pageSize } = context.paginationContext.paginationSizeType;
-
+  const { totalItems, setCurrentPage, pageSize } = usePagination()
 
   // Calculate the total number of pages
   const pageCount = Math.ceil(totalItems / pageSize);

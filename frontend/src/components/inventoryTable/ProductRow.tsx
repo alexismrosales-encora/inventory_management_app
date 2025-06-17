@@ -1,7 +1,8 @@
-import { useContext } from "react"
-import { InventoryContext } from "../../context/InventoryContext";
 import { NavUpArrowIcon, NavDownArrowIcon, EditProductIcon, DeleteProductIcon } from "../../utils/icons"
 import { useInventoryItems } from "../../hooks/useInventoryItems";
+import { useSorting } from "../../context/SortingContext";
+import { useTableTrigger } from "../../context/TableTriggerContext";
+import { useConfirmations } from "../../context/ConfirmationContext";
 
 /**
 * ProductRows Component
@@ -91,11 +92,7 @@ export const ProductRows = () => {
  * </thead>
  */
 export const ProductRowHeader = () => {
-  const context = useContext(InventoryContext)
-  if (!context) {
-    return null
-  }
-  const { markItemsConfirmation, setMarkItemsConfirmation } = context.inventoryItemsOutOfStockType
+  const { markItemsConfirmation, setMarkItemsConfirmation } = useConfirmations()
   return <tr>
     <th className="px-2 pt-2 align-bottom">
       <label className="flex space-x-2 items-end justify-between h-full">
@@ -168,13 +165,8 @@ interface UpDownButtonsProps {
 }
 
 const UpDownButtons = ({ sortBy }: UpDownButtonsProps) => {
-  const context = useContext(InventoryContext)
-  // TODO: Order by default by date created
-  if (!context) {
-    return null
-  }
-  const { sortOrder, setSortOrder, sortBy: currentSortBy, setSortBy } = context.sortingContext;
-  const { setShouldUpdateTable } = context.triggerTableUpdateType;
+  const { sortOrder, setSortOrder, sortBy: currentSortBy, setSortBy } = useSorting()
+  const { triggerUpdate } = useTableTrigger()
 
   /**
    * Handles the sorting arrow button click.
@@ -208,7 +200,7 @@ const UpDownButtons = ({ sortBy }: UpDownButtonsProps) => {
 
     setSortBy(newSortBy) // Field to order
     setSortOrder(newSortOrder) // update global context
-    setShouldUpdateTable(prev => !prev) // Updating table
+    triggerUpdate() // Updating table
   }
 
   return <button type="button" onClick={handleNavArrowButton}>
