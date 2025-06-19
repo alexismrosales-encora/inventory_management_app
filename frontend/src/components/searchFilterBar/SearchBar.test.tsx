@@ -1,37 +1,53 @@
-
 // SearchBar.test.tsx
-import { render, screen } from "@testing-library/react";
-import { describe, test, expect, vi } from "vitest";
+import { screen } from "@testing-library/react"
+import { describe, test, expect, vi } from "vitest"
+import { render } from "../../utils/tests.utils"
+import SearchBar from "./SearchBar"
+import { useInventoryFilters } from "../../hooks/useInventoryFilters"
 
-vi.mock("../../services/inventory.service", () => {
-  return {
-    default: {
-      getCategories: vi.fn().mockResolvedValue(["Category1", "Category2"]),
-    },
-  };
-});
+// ===================================================================================
+// MOCKS SETUP
+// ===================================================================================
+vi.mock("../../hooks/useInventoryFilters")
 
-import SearchBar from "./SearchBar";
-import { InventoryContext } from "../../context/InventoryContext";
-import { mockContextValue } from "../../mocks/inventory.context.mock";
+// A helper to easily access the mocked hook
+const mockUseInventoryFilters = vi.mocked(useInventoryFilters)
 
+// ===================================================================================
+// TESTS
+// ===================================================================================
 describe("SearchBar", () => {
-  test("should render search input, new product button, availability select and category checkboxes", async () => {
-    render(
-      <InventoryContext.Provider value={mockContextValue}>
-        <SearchBar />
-      </InventoryContext.Provider>
-    );
+  test("should render search input, new product button, and category checkboxes", async () => {
+    // Arrange: Define the mock return value for the hook.
+    // We provide sample categories so the component has something to render.
+    mockUseInventoryFilters.mockReturnValue({
+      filters: { search: '', categories: [], stockStatus: null },
+      categories: ["Category1", "Category2"], // Provide mock categories
+      isLoading: false,
+      error: null,
+      handleSearchTextChange: vi.fn(),
+      handleCategoryChange: vi.fn(),
+      handleStockStatusChange: vi.fn(),
+    })
 
-    const searchInput = screen.getByPlaceholderText(/Enter product name/i);
-    expect(searchInput).toBeInTheDocument();
+    // Act: Render the component. Our custom render function will wrap it
+    // with all the necessary providers for any child components.
+    render(<SearchBar />)
 
-    const newProductButton = screen.getByRole("button", { name: /New product/i });
-    expect(newProductButton).toBeInTheDocument();
+    // Assert: Check that all the key elements are rendered correctly.
 
+    // Check for the search input
+    const searchInput = screen.getByPlaceholderText(/Enter product name/i)
+    expect(searchInput).toBeInTheDocument()
 
-    const categoryCheckbox = await screen.findByRole("checkbox", { name: /Category1/i });
-    expect(categoryCheckbox).toBeInTheDocument();
-  });
-});
+    // Check for the "New product" button
+    const newProductButton = screen.getByRole("button", { name: /New product/i })
+    expect(newProductButton).toBeInTheDocument()
+
+    // Check for the category checkboxes. We use `findByRole` because the categories
+    // might be rendered after a brief moment (if the hook were async).
+    const categoryCheckbox = await screen.findByRole("checkbox", { name: /Category1/i })
+    expect(categoryCheckbox).toBeInTheDocument()
+  })
+})
 

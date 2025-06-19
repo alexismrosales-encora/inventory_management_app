@@ -20,11 +20,7 @@ import { useMetricsData } from "../../hooks/useMetricsData"
 const MetricsTable = () => {
   const { metrics, error, isLoading } = useMetricsData()
 
-  if (!metrics) {
-    return <div>
-      Empty
-    </div>
-  }
+
   if (isLoading) {
     return <div>
       Loading...
@@ -33,6 +29,11 @@ const MetricsTable = () => {
   if (error) {
     return <div>
       Error
+    </div>
+  }
+  if (!metrics) {
+    return <div>
+      Not metrics available yet
     </div>
   }
   return <div className="pt-5 md:px-[15rem] w-full">

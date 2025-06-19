@@ -1,51 +1,68 @@
-// ProductForm.test.tsx
-import { render, screen } from "@testing-library/react";
-import { describe, test, expect, vi } from "vitest";
+import { screen } from "@testing-library/react"
+import { describe, test, expect, vi, beforeEach } from "vitest"
+import { render } from "../../utils/tests.utils" // Your custom render function
+import ProductForm from "./ProductForm"
+import { useProductForm } from "../../hooks/useProductForm"
+import { StockStatus } from "../../utils/inventory.utils"
+import { InventoryItem } from "../../types/inventory"
 
-vi.mock("../../services/inventory.service", () => {
-  return {
-    default: {
-      getCategories: vi.fn().mockResolvedValue(["Food", "Drinks"]),
-      createInventoryItem: vi.fn().mockResolvedValue({}),
-      updateInventoryItem: vi.fn().mockResolvedValue({}),
-    },
-  };
-});
+// ===================================================================================
+// MOCKS SETUP
+// ===================================================================================
+vi.mock("../../hooks/useProductForm")
 
-import ProductForm from "./ProductForm";
-import { InventoryContext } from "../../context/InventoryContext";
-import { InventoryItem } from "../../types/inventory";
-import { StockStatus } from "../../utils/inventory.utils";
+// A helper to easily access the mocked hook
+const mockUseProductForm = vi.mocked(useProductForm)
 
-const mockContextValue = {
-  triggerTableUpdateType: {
-    shouldUpdateTable: false,
-    setShouldUpdateTable: vi.fn(),
-  },
-};
-
+// ===================================================================================
+// TESTS
+// ===================================================================================
 describe("ProductForm", () => {
-  test("should render the create form when productToEdit is null", async () => {
-    render(
-      <InventoryContext.Provider value={mockContextValue as any}>
-        <ProductForm productToEdit={null} onClose={vi.fn()} />
-      </InventoryContext.Provider>
-    );
+  // Before each test, reset the mock to a default "create" state.
+  beforeEach(() => {
+    mockUseProductForm.mockReturnValue({
+      selectedName: "",
+      errorName: false,
+      error: null,
+      isLoading: false,
+      categories: ["Food", "Drinks"],
+      isVisible: false,
+      allProductsAreValid: true,
+      selectedCategory: "",
+      setSelectedCategory: vi.fn(),
+      selectedStock: 10,
+      setSelectedStock: vi.fn(),
+      selectedUnitPrice: 0,
+      setSelectedUnitPrice: vi.fn(),
+      selectedDate: null,
+      setSelectedDate: vi.fn(),
+      handleSumbit: vi.fn(),
+      handleChangeName: vi.fn(),
+      handleNewCategoryButton: vi.fn(),
+    })
+  })
 
-    const instruction = await screen.findByText(/Please provide the required information/i);
-    expect(instruction).toBeInTheDocument();
+  test("should render the create form correctly", async () => {
+    // Act
+    render(<ProductForm productToEdit={null} onClose={vi.fn()} />)
 
-    expect(screen.getByLabelText(/product name/i)).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /save/i })).toBeInTheDocument();
-  });
+    // Assert: that the main instruction text is visible.
+    const instruction = await screen.findByText(/Please provide the required information/i)
+    expect(instruction).toBeInTheDocument()
 
-  test("should render the edition form when productToEdit is not null", async () => {
+    // Assert: that key form elements are present.
+    expect(screen.getByLabelText(/product name/i)).toBeInTheDocument()
+    expect(screen.getByRole("button", { name: /save/i })).toBeInTheDocument()
+  })
+
+  test("should render the form with pre-filled data when editing", async () => {
+    // Arrange: Create a mock product that will be "edited".
     const mockProduct: InventoryItem = {
       id: 1,
       product: {
         id: 1,
         name: "Test Product",
-        category: "Electronics",
+        category: "Food",
         price: 99,
         expiryDate: null,
         dateCreated: new Date(),
@@ -53,22 +70,34 @@ describe("ProductForm", () => {
       },
       quantity: 5,
       stockStatus: StockStatus.OUT_OF_STOCK,
-    };
+    }
 
-    render(
-      <InventoryContext.Provider value={mockContextValue as any}>
-        <ProductForm productToEdit={mockProduct} onClose={vi.fn()} />
-      </InventoryContext.Provider>
-    );
+    // For this test, override the mock to return the data of the product to edit.
+    mockUseProductForm.mockReturnValue({
+      selectedName: mockProduct.product.name,
+      selectedCategory: mockProduct.product.category,
+      selectedStock: mockProduct.quantity,
+      selectedUnitPrice: mockProduct.product.price,
+      errorName: false,
+      error: null,
+      isLoading: false,
+      categories: ["Food", "Drinks"],
+      isVisible: false,
+      allProductsAreValid: true,
+      setSelectedCategory: vi.fn(),
+      setSelectedStock: vi.fn(),
+      setSelectedUnitPrice: vi.fn(),
+      selectedDate: null,
+      setSelectedDate: vi.fn(),
+      handleSumbit: vi.fn(),
+      handleChangeName: vi.fn(),
+      handleNewCategoryButton: vi.fn(),
+    })
 
-    const nameField = await screen.findByDisplayValue("Test Product");
-    expect(nameField).toBeInTheDocument();
-  });
+    render(<ProductForm productToEdit={mockProduct} onClose={vi.fn()} />)
 
-  test("should render nothing if the context is null", () => {
-    render(<ProductForm productToEdit={null} onClose={vi.fn()} />);
-    const instruction = screen.queryByText(/Please provide the required information/i);
-    expect(instruction).not.toBeInTheDocument();
-  });
-});
-
+    // Assert: Check that the input field is pre-filled with the product's name.
+    const nameField = await screen.findByDisplayValue("Test Product")
+    expect(nameField).toBeInTheDocument()
+  })
+})

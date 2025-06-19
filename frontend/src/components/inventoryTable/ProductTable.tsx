@@ -38,6 +38,11 @@ const ProductTable = () => {
   const { inventoryItems } = useInventoryData()
   const { isLoading, error } = useInventoryFilters()
 
+  if (inventoryItems.length == 0) {
+    return <>
+      No products found.
+    </>
+  }
   if (isLoading) {
     return <>xd</>
   }
@@ -156,5 +161,3 @@ const WarningConfirmation = ({ mainText, arg, handleFunction, onClose }: Warning
 }
 
 export default ProductTable
-
-
