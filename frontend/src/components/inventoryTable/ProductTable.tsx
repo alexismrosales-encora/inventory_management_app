@@ -1,11 +1,15 @@
-import { useContext } from 'react'
 import { ProductRowHeader, ProductRows } from './ProductRow'
-import { InventoryContext } from '../../context/InventoryContext'
 
 import Modal from "../modal/Modal";
 
 import ProductForm from "../productForm/ProductForm";
 import inventoryService from '../../services/inventory.service';
+import { useTableTrigger } from '../../context/TableTriggerContext';
+import { useProductModal } from '../../context/ProductModalContext';
+import { useConfirmations } from '../../context/ConfirmationContext';
+import { InventoryItem } from '../../types/inventory';
+import { useInventoryData } from '../../context/InventoryDataContext';
+import { useInventoryFilters } from '../../hooks/useInventoryFilters';
 
 /**
  * ProductTable Component
@@ -21,19 +25,31 @@ import inventoryService from '../../services/inventory.service';
  * )
  */
 const ProductTable = () => {
-  const context = useContext(InventoryContext)
-  if (!context) {
-    return null
-  }
   const { shouldOpenForm,
     setShouldOpenForm,
-    item,
+  } = useProductModal()
+  const { itemForAction } = useProductModal()
+  const {
     deleteConfirmation,
-    setDeleteConfirmation } = context.toggleForCreateAndEditProduct
-  const { setShouldUpdateTable } = context.triggerTableUpdateType
-  const { markItemsConfirmation, setMarkItemsConfirmation } = context.inventoryItemsOutOfStockType
-  const { inventoryItems } = context.inventoryItems
+    setDeleteConfirmation,
+    markItemsConfirmation,
+    setMarkItemsConfirmation } = useConfirmations()
+  const { triggerUpdate } = useTableTrigger()
+  const { inventoryItems } = useInventoryData()
+  const { isLoading, error } = useInventoryFilters()
 
+  if (inventoryItems.length == 0) {
+    return <>
+      No products found.
+    </>
+  }
+  if (isLoading) {
+    return <>xd</>
+  }
+
+  if (error) {
+    return <>Error</>
+  }
 
 
   /**
@@ -46,8 +62,8 @@ const ProductTable = () => {
    */
   const handleDeleteButton = (id: number) => {
     inventoryService.deleteInventoryItem(id) // Delete item
-    setShouldUpdateTable(prev => !prev) // Trigger update
-    setDeleteConfirmation(true)
+    triggerUpdate()
+    setDeleteConfirmation(true) // Trigger update of the product table
   }
 
   /**
@@ -57,10 +73,10 @@ const ProductTable = () => {
    * a table update.
    */
   const handleMarkItems = () => {
-    inventoryItems.map((item) => {
+    inventoryItems.map((item: InventoryItem) => {
       inventoryService.updateInventoryItemOutOfStock(item.id)
     })
-    setShouldUpdateTable(prev => !prev) // Trigger update of the product table
+    triggerUpdate() // Trigger update of the product table
   }
 
   return <> <div className="relative overflow-x-auto xl:overflow-visible">
@@ -78,10 +94,10 @@ const ProductTable = () => {
     <Modal
       isOpen={shouldOpenForm}
       setIsOpen={setShouldOpenForm}
-      dialogTitle={item ? "Edit product" : "Create new product"}
+      dialogTitle={itemForAction ? "Edit product" : "Create new product"}
       dialogContent={
         <ProductForm
-          productToEdit={item}
+          productToEdit={itemForAction}
           onClose={() => setShouldOpenForm(false)}
         />}
     />
@@ -93,7 +109,7 @@ const ProductTable = () => {
       dialogContent={
         <WarningConfirmation
           mainText="Are you sure you want to delete this inventory item?"
-          arg={item?.id || 0}
+          arg={itemForAction?.id || 0}
           handleFunction={handleDeleteButton}
           onClose={() => setDeleteConfirmation(false)}
         />
@@ -145,5 +161,3 @@ const WarningConfirmation = ({ mainText, arg, handleFunction, onClose }: Warning
 }
 
 export default ProductTable
-
-

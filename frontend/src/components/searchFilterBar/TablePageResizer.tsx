@@ -1,6 +1,5 @@
-import { useContext } from 'react'
 import { pageSizes } from '../../utils/inventory.utils'
-import { InventoryContext } from '../../context/InventoryContext'
+import { usePagination } from '../../context/PaginationContext'
 
 
 /**
@@ -17,12 +16,7 @@ interface TablePageResizerType {
   className?: string
 }
 const TablePageResizer = ({ className }: TablePageResizerType) => {
-  const context = useContext(InventoryContext)
-  if (!context) {
-    return null
-  }
-  const { pageSize, setPageSize } = context.paginationContext.paginationSizeType
-
+  const { pageSize, setPageSize } = usePagination()
   /**
      * Handles changes in the select element for pagination size.
      *
